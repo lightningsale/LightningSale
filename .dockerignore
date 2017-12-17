@@ -1,0 +1,11 @@
+# Cache, session files and logs (Symfony3)
+var/*
+cache
+app/config/parameters.yml
+
+app/bootstrap.php.cache
+vendor/
+node_modules/
+.idea
+.git
+.env
