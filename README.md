@@ -3,6 +3,10 @@
 Set up the .env file or environment variables for database and LND config!
 Or use github.com/lightningsale/LightningSale and `docker-compose up`
 
+## LightningShop TODO:
+ - [ ] Copywriting
+ - [ ] Design/Style
+
 ## Setup
  - [ ] Setup a database
  - [ ] Configure settings with environment variabelse or configure them in the `.env` file
