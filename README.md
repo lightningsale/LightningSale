@@ -3,9 +3,17 @@
 Set up the .env file or environment variables for database and LND config!
 Or use github.com/lightningsale/LightningSale and `docker-compose up`
 
+## First setup:
+ - git clone https://github.com/lightningsale/LightningSale
+ - docker-compose up
+ - docker-compose exec pos php bin/console doctrine:database:create
+
 ## LightningShop TODO:
  - [ ] Copywriting
  - [ ] Design/Style
+ - [ ] Figure out how to copy required certificates from LND to POS
+ - [ ] Figure out how to use Macaroons
+ - [ ] Move POS repo to LightningSale repository
 
 ## Components:
  - [ ] LND gRPC Client
