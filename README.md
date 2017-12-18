@@ -13,6 +13,7 @@ Or use github.com/lightningsale/LightningSale and `docker-compose up`
  - [ ] QR Code
  - [ ] Payments Dashboard (Should we just use LND as a source of truth, or store all payments/transactions in our own database)
 
+
 ## Setup
  - [ ] Setup a database
  - [ ] Configure settings with environment variabelse or configure them in the `.env` file
