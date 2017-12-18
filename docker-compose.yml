@@ -1,0 +1,38 @@
+version: "2.1"
+
+services:
+  lnd:
+    image: lightningsale/docker-lnd
+    ports:
+      - 9735:9735
+    expose: ["10009", "8080"]
+    volumes:
+      - /root/.lnd:/root/.lnd
+    command:
+      - "--bitcoin.active"
+      - "--bitcoin.testnet"
+      - "--debuglevel=debug"
+      - "--neutrino.active"
+      - "--neutrino.connect=faucet.lightning.community"
+      - "--autopilot.active"
+      - "--no-macaroons"
+      - "--external-ip=127.0.0.1"
+    networks:
+      - lightningsale
+  pos:
+    image: lightningsale/pos
+    networks:
+      - lightningsale
+    ports:
+      - 80:80
+    environment:
+      - DATABASE_URL=mysql://root:abcd1234@127.0.0.1:3306/lightningsale
+
+  mysql:
+    image: mysql
+    networks:
+      - lightningsale
+    environment:
+      - MYSQL_ROOT_PASSWORD: abcd1234
+networks:
+  lightningsale: ~
