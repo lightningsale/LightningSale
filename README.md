@@ -15,6 +15,8 @@ Or use github.com/lightningsale/LightningSale and `docker-compose up`
  - [ ] Figure out how to use Macaroons
  - [ ] Move POS repo to LightningSale repository
  - [ ] Use `LND`s own Dockerfile's https://github.com/lightningnetwork/lnd/tree/master/docker
+ - [ ] Use Docker Secrets
+ - [ ] Security!
 
 ## Components:
  - [ ] LND gRPC Client

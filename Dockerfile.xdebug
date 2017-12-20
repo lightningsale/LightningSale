@@ -1,0 +1,16 @@
+FROM richard87/php-base
+
+RUN pecl install protobuf grpc && docker-php-ext-enable protobuf grpc
+
+COPY composer.json composer.lock symfony.lock ./
+
+RUN pecl install xdebug-2.5.5 && docker-php-ext-enable xdebug
+RUN echo '' >> /usr/local/etc/php/php.ini
+RUN echo 'xdebug.remote_port=9000' >> /usr/local/etc/php/php.ini
+RUN echo 'xdebug.remote_enable=1' >> /usr/local/etc/php/php.ini
+RUN echo 'xdebug.remote_connect_back=1' >> /usr/local/etc/php/php.ini
+RUN echo 'xdebug.remote_autostart=1' >> /usr/local/etc/php/php.ini
+
+ENV  SYMFONY_ENV=dev \
+    SYMFONY_DEBUG=true \
+    PHP_IDE_CONFIG=serverName=lightningsale.docker
