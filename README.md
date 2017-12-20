@@ -14,6 +14,7 @@ Or use github.com/lightningsale/LightningSale and `docker-compose up`
  - [ ] Figure out how to copy required certificates from LND to POS
  - [ ] Figure out how to use Macaroons
  - [ ] Move POS repo to LightningSale repository
+ - [ ] Use `LND`s own Dockerfile's https://github.com/lightningnetwork/lnd/tree/master/docker
 
 ## Components:
  - [ ] LND gRPC Client
