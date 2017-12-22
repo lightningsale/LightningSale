@@ -14,15 +14,18 @@ services:
       - DEBUG=info
       - EXTERNALIP=127.0.0.1
     volumes:
-      - /root/.lnd:/root/.lnd
+      - lnd:/root/.lnd
     ports:
       - 9735:9735
     expose: ["10009", "8080"]
     entrypoint: ["./start-lnd.sh"]
+    hostname: lnd
     command:
       - "--neutrino.active"
       - "--neutrino.connect=faucet.lightning.community"
       - "--autopilot.active"
+      - "--externalip=92.221.98.237"
+      - "--no-macaroons"
   pos:
     build:
       dockerfile: Dockerfile.xdebug
@@ -36,6 +39,7 @@ services:
       - lnd
     volumes:
       - .:/var/www
+      - lnd:/var/www/var/lnd
 
   mysql:
     image: mysql
@@ -43,3 +47,5 @@ services:
       - 3307:3306
     environment:
       - MYSQL_ROOT_PASSWORD=abcd1234
+volumes:
+  lnd: ~
