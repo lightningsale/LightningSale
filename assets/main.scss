@@ -1,0 +1,16 @@
+
+$brand-primary: darken(#cac045, 20%);
+$icon-font-path: "~bootstrap-sass/assets/fonts/bootstrap/";
+$fa-font-path: "~font-awesome/fonts";
+@import '~bootstrap-sass/assets/stylesheets/bootstrap';
+@import "~font-awesome/scss/font-awesome";
+
+.navbar {
+  position: relative;
+}
+.brand {
+  position: absolute;
+  left: 50%;
+  margin-left: -50px !important;  /* 50% of your logo width */
+  display: block;
+}
