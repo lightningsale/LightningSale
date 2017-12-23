@@ -1,4 +1,7 @@
 {
+    "bacon/bacon-qr-code": {
+        "version": "1.0.3"
+    },
     "clue/stream-filter": {
         "version": "v1.4.0"
     },
@@ -59,6 +62,18 @@
     "doctrine/orm": {
         "version": "v2.5.14"
     },
+    "endroid/qrcode": {
+        "version": "3.1.0"
+    },
+    "endroid/qrcode-bundle": {
+        "version": "3.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "master",
+            "version": "3.0",
+            "ref": "c7d3c39bcc544e84e6ed5249969e7227e7e63b14"
+        }
+    },
     "google/protobuf": {
         "version": "v3.5.0.1"
     },
@@ -80,14 +95,17 @@
     "jeremykendall/php-domain-parser": {
         "version": "3.0.0"
     },
+    "khanamiryan/qrcode-detector-decoder": {
+        "version": "1"
+    },
     "league/uri": {
         "version": "4.2.2"
     },
-    "lightningsale/lnd-grpc": {
-        "version": "v0.1.0"
-    },
     "lightningsale/lnd-rest": {
         "version": "dev-master"
+    },
+    "myclabs/php-enum": {
+        "version": "1.5.2"
     },
     "nikic/php-parser": {
         "version": "v3.1.2"

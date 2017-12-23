@@ -7,6 +7,7 @@
  */
 
 namespace App\Controller\Merchant;
+use App\Entity\Payment;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -14,7 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * Class DashboardController
  * @package App\Controller\Merchant
- * @Route("/dashbard", name="merchant_dashboard_")
+ * @Route("/dashboard", name="merchant_dashboard_")
  */
 class DashboardController extends Controller
 {
@@ -23,6 +24,12 @@ class DashboardController extends Controller
      */
     public function indexAction(): Response
     {
-        return $this->render(":Merchant/Dashboard:index.html.twig", []);
+        /** @var Payment[] $invoices */
+        $invoices = [];
+        foreach (range(0,100) as $index)
+            $invoices[] = new Payment(Payment::STATE_PAID, random_int(100,1000)* 10,"NOK");
+
+
+        return $this->render("Merchant/Dashboard/index.html.twig", ['invoices' => $invoices]);
     }
 }
