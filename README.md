@@ -4,10 +4,10 @@ Set up the .env file or environment variables for database and LND config!
 Or use github.com/lightningsale/LightningSale and `docker-compose up`
 
 ## Milestone 1
- 1. [ ] Set up users and authentication (Security!)
- 2. [ ] Set up Funding, Peers and Channels
- 3. [ ] Transactions
- 4. [ ] Backups and Recovery
+ 1. Set up users and authentication (Security!)
+ 2. Set up Funding, Peers and Channels
+ 3. Transactions
+ 4. Backups and Recovery
 
 ## Milestone 2
  1. [ ] Design / UX
