@@ -1,6 +1,7 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
+    lnd_cert: "%kernel.project_dir%/var/lnd/tls.cert"
 
 services:
     # default configuration for services in *this* file
@@ -25,3 +26,8 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+    LightningSale\LndRest\Resource\LndClient:
+        class: LightningSale\LndRest\Resource\LndClient
+        factory: ['@App\Service\LightningServiceFactory','getLndClient']
+    App\Service\LightningServiceFactory:
+        arguments: ["%lnd_cert%", "%env(LND_RPC_PASSWORD)%", "%env(LND_RPC_USERNAME)%", "%env(LND_HOST)%", "%env(LND_PORT)%"]
