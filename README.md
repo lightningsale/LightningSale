@@ -4,7 +4,7 @@ Set up the .env file or environment variables for database and LND config!
 Or use github.com/lightningsale/LightningSale and `docker-compose up`
 
 ## Milestone 1
- 1. Set up users and authentication (Security!)
+ 1. [X] Set up users and authentication (Security!)
  2. Set up Funding, Peers and Channels
  3. Transactions
  4. Backups and Recovery
@@ -25,15 +25,15 @@ Or use github.com/lightningsale/LightningSale and `docker-compose up`
  - [ ] Design/Style
  - [ ] Figure out how to copy required certificates from LND to POS
  - [ ] Figure out how to use Macaroons
- - [ ] Move POS repo to LightningSale repository
- - [ ] Use `LND`s own Dockerfile's https://github.com/lightningnetwork/lnd/tree/master/docker
+ - [X] Move POS repo to LightningSale repository
+ - [X] Use `LND`s own Dockerfile's https://github.com/lightningnetwork/lnd/tree/master/docker
  - [ ] Use Docker Secrets
  - [ ] Security!
 
 ## Components:
- - [ ] LND gRPC Client
- - [ ] Auth Component (Handle owners and Users)
- - [ ] QR Code
+ - [X] -LND gRPC Client- Use LND Rest Client
+ - [X] Auth Component (Handle owners and Users)
+ - [X] QR Code
  - [ ] Payments Dashboard (Should we just use LND as a source of truth, or store all payments/transactions in our own database)
 
 
@@ -42,19 +42,19 @@ Or use github.com/lightningsale/LightningSale and `docker-compose up`
  - [ ] Configure settings with environment variabelse or configure them in the `.env` file
  - [ ] Configure wallet / kommunikasjon med LND
  - [ ] Configure exchange 
-   - [ ] Select Currency
-   - [ ] Select transaction fee (for customer)
-   - [ ] Settlement address
-   - [ ] Settlement (immediatly, on demand, periodic)
+    - [ ] Select Currency
+    - [ ] Select transaction fee (for customer)
+    - [ ] Settlement address
+    - [ ] Settlement (immediatly, on demand, periodic)
  - [ ] Create first user
  - [ ] Setup script?
 
 ## Pages / TODO:
- - [ ] Login
+ - [X] Login
  - [ ] Customer details (whitelabel stuff
    - [ ] Node/Wallet details/Status
-     - [ ] Channe funding
-     - [ ] Wallet funding
+      - [ ] Channe funding
+      - [ ] Wallet funding
    - [ ] Setup user accounts
  - [ ] User details
  - [ ] Dashboard
@@ -66,11 +66,11 @@ Or use github.com/lightningsale/LightningSale and `docker-compose up`
    - [ ] Login (With screen ID)
    - [ ] Whitelabel "default" screen
    - [ ] Payment request details:
-     - [ ] QR-Code
-     - [ ] Whitelabel
-     - [ ] Serialized payment request
-     - [ ] Price in Bitcoin / Selected currency
+      - [ ] QR-Code
+      - [ ] Whitelabel
+      - [ ] Serialized payment request
+      - [ ] Price in Bitcoin / Selected currency
 ## Domain model
- - [ ] User (base, regular, owner)
+ - [X] User (base, Cashier, Merchant)
  - [ ] Screens (one pr logged in user?)
  - [ ] Payments
