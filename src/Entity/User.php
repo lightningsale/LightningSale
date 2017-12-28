@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Created by PhpStorm.
  * User: richard
@@ -10,21 +10,23 @@ namespace App\Entity;
 
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
+use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
+use Symfony\Component\Security\Core\User\EquatableInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Class User
  * @package App\Entity
- * @ORM\Table("users")
+ * @ORM\Table(name="users")
+ * @ORM\Entity()
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="type",type="integer")
  * @ORM\DiscriminatorMap({
- *      0: "App\Entity\Cashier",
- *      1: "App\Entity\Merchant"
+ *      0 = "App\Entity\Cashier",
+ *      1 = "App\Entity\Merchant"
  * })
  */
-abstract class User implements UserInterface, \Serializable
+abstract class User implements UserInterface, EquatableInterface
 {
     /**
      * @var integer
@@ -65,9 +67,10 @@ abstract class User implements UserInterface, \Serializable
         return $this->createdAt;
     }
 
-    public function __construct(string $email,PasswordEncoderInterface $passwordEncoder,  string $rawPassword)
+    public function __construct(string $email,EncoderFactoryInterface $encoderFactory,  string $rawPassword)
     {
         $this->email = $email;
+        $passwordEncoder = $encoderFactory->getEncoder(self::class);
         $this->password = $passwordEncoder->encodePassword($rawPassword, $this->getSalt());
         $this->createdAt = new \DateTime();
     }
@@ -79,11 +82,12 @@ abstract class User implements UserInterface, \Serializable
 
     public function getPassword(): string
     {
-        throw new \DomainException("This method should not be used!");
+        return $this->password;
     }
 
-    public function verifyPassword(PasswordEncoderInterface $passwordEncoder, string $rawPassword): bool
+    public function verifyPassword(EncoderFactoryInterface $encoderFactory, string $rawPassword): bool
     {
+        $passwordEncoder = $encoderFactory->getEncoder(self::class);
         return $passwordEncoder->isPasswordValid($this->password, $rawPassword, $this->getSalt());
     }
 
@@ -101,12 +105,22 @@ abstract class User implements UserInterface, \Serializable
 
     public function serialize()
     {
-        return serialize([$this->id,$this->email, $this->password]);
+        return serialize([
+            $this->id,
+            $this->email
+        ]);
     }
 
     public function unserialize($serialized)
     {
-        [$this->id,$this->email,$this->password] = $this->unserialize($serialized);
+        [
+            $this->id,
+            $this->email] = unserialize($serialized,[self::class, Merchant::class, Cashier::class]);
+    }
+
+    public function isEqualTo(UserInterface $user)
+    {
+        return $user->getUsername() === $this->email && $user->getPassword() === $this->password;
     }
 
 

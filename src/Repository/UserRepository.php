@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Created by PhpStorm.
  * User: richard
@@ -13,6 +13,7 @@ use App\Entity\Cashier;
 use App\Entity\Merchant;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -21,16 +22,16 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 class UserRepository implements UserProviderInterface
 {
     private $userRepo;
-    private $em;
+    private $encoderFactory;
 
     /**
      * UserRepository constructor.
      * @param $em
      */
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(EntityManagerInterface $em, EncoderFactoryInterface $encoderFactory)
     {
-        $this->em = $em;
         $this->userRepo = $em->getRepository(User::class);
+        $this->encoderFactory = $encoderFactory;
     }
 
     public function find(int $id): ?User

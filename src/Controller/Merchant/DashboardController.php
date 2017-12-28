@@ -16,7 +16,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * Class DashboardController
  * @package App\Controller\Merchant
- * @Route("/dashboard", name="merchant_dashboard_")
+ * @Route("/dashboard", name="cashier_dashboard_")
  * @Security("is_granted('ROLE_CASHIER')")
  */
 class DashboardController extends Controller

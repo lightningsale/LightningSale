@@ -17,6 +17,8 @@ Or use github.com/lightningsale/LightningSale and `docker-compose up`
  - git clone https://github.com/lightningsale/LightningSale
  - docker-compose up
  - docker-compose exec pos php bin/console doctrine:database:create
+ - docker-compose exec pos php bin/console doctrine:migrate:migrate
+ - docker-compose exec pos php bin/console app:create:user <-- Create first user
 
 ## LightningShop TODO:
  - [ ] Copywriting
