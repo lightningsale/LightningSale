@@ -10,7 +10,7 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Class Merchant
+ * Class Cashier
  * @package App\Entity
  * @ORM\Entity()
  */

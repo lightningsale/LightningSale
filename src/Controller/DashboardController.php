@@ -6,7 +6,7 @@
  * Time: 12:52
  */
 
-namespace App\Controller\Merchant;
+namespace App\Controller;
 use App\Entity\Payment;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Class DashboardController
- * @package App\Controller\Merchant
+ * @package App\Controller\Cashier
  * @Route("/dashboard", name="cashier_dashboard_")
  * @Security("is_granted('ROLE_CASHIER')")
  */
@@ -31,6 +31,6 @@ class DashboardController extends Controller
         foreach (range(0,100) as $index)
             $invoices[] = new Payment(Payment::STATE_PAID, random_int(100,1000)* 10,"NOK");
 
-        return $this->render("Merchant/Dashboard/index.html.twig", ['invoices' => $invoices]);
+        return $this->render("Dashboard/index.html.twig", ['invoices' => $invoices]);
     }
 }

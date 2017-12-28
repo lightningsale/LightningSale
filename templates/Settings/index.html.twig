@@ -1,0 +1,130 @@
+{% extends 'base.html.twig' %}
+
+{% block headerLeft %}
+    <li class="nav-item"><a href="{{ path('cashier_dashboard_index') }}" class="nav-link"><i class="fa fa-home"></i>
+            Dashboard</a></li>
+{% endblock %}
+
+{% block headerRight %}
+    <li class="nav-item"><a href="#" class="nav-link"><i class="fa fa-users"></i> Users</a></li>
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <table class="table" style="table-layout: fixed; width: 100%;">
+                    <thead class="table-dark">
+                    <tr>
+                        <th>Local Balance</th>
+                        <th>Channel ID</th>
+                        <th>Remote Balance</th>
+                        <th>Capacity</th>
+                        <th>Status</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for channel in channels %}
+                        <tr>
+                            <td>{{ (channel.localBalance / 100000)|round(2) }} <small>mBTC</small></td>
+                            <td>{{ channel.chanId }}</td>
+                            <td>{{ (channel.remoteBalance / 100000)|round(2) }} <small>mBTC</small></td>
+                            <td>{{ (channel.capacity / 100000)|round(2) }} <small>mBTC</small></td>
+                            <td>Open</td>
+                        </tr>
+                    {% endfor %}
+                    {% for channel in pendingChannels.pendingOpenChannels %}
+                        <tr>
+                            <td>{{ channel.channel.localBalance }}</td>
+                            <td></td>
+                            <td>{{ channel.channel.remoteBalance }}</td>
+                            <td>{{ channel.channel.capacity }}</td>
+                            <td>Opening</td>
+                        </tr>
+                    {% endfor %}
+                    {% for channel in pendingChannels.pendingClosingChannels %}
+                        <tr>
+                            <td>{{ channel.channel.localBalance }}</td>
+                            <td></td>
+                            <td>{{ channel.channel.remoteBalance }}</td>
+                            <td>{{ channel.channel.capacity }}</td>
+                            <td>Closing</td>
+                        </tr>
+                    {% endfor %}
+                    {% for channel in pendingChannels.pendingClosingChannels %}
+                        <tr>
+                            <td>{{ channel.channel.localBalance }}</td>
+                            <td></td>
+                            <td>{{ channel.channel.remoteBalance }}</td>
+                            <td>{{ channel.channel.capacity }}</td>
+                            <td>Force Closing</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-8">
+                <table class="table" style="table-layout: fixed; width: 100%;">
+                    <thead class="table-dark">
+                    <tr>
+                        <th>Peer adress</th>
+                        <th>Response</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for peer in peers %}
+                        <tr>
+                            <td>{{ peer.address }}</td>
+                            <td>{{ peer.pingTime }} <small>ms</small></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-4">
+                <table class="table" style="table-layout: fixed; width: 100%;">
+                    <thead class="table-dark">
+                    <tr>
+                        <th>Amount</th>
+                        <th>Status</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{ (wallet.confirmedBalance / 100000)|round(2) }} <small>mBTC</small></td>
+                            <td>Confirmed</td>
+                        </tr>
+                        <tr>
+                            <td>{{ (wallet.unconfirmedBalance / 100000)|round(2) }} <small>mBTC</small></td>
+                            <td>Unconfirmed</td>
+                        </tr>
+                        <tr>
+                            <td>{{ (wallet.totalBalance / 100000)|round(2) }} <small>mBTC</small></td>
+                            <td>Total</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-12">
+                <table class="table" style="table-layout: fixed; width: 100%;">
+                    <thead class="table-dark">
+                    <tr>
+                        <th>Invoice Date</th>
+                        <th>Value</th>
+                        <th>Memo</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for invoice in pendingInvoices %}
+                    <tr>
+                        <td>{{ invoice.creationDate }}</td>
+                        <td>{{ invoice.value }}</td>
+                        <td>{{ invoice.memo }}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
