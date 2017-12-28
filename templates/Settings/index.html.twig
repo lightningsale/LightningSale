@@ -7,6 +7,7 @@
 
 {% block headerRight %}
     <li class="nav-item"><a href="#" class="nav-link"><i class="fa fa-users"></i> Users</a></li>
+    <li class="nav-item"><a href="#" class="nav-link"><i class="fa fa-dollar"></i> Transactions</a></li>
 {% endblock %}
 
 {% block body %}
@@ -75,7 +76,7 @@
                     {% for peer in peers %}
                         <tr>
                             <td>{{ peer.address }}</td>
-                            <td>{{ peer.pingTime }} <small>ms</small></td>
+                            <td>{{ (peer.pingTime / 60)|round }} <small>s</small></td>
                         </tr>
                     {% endfor %}
                     </tbody>
@@ -117,8 +118,8 @@
                     <tbody>
                     {% for invoice in pendingInvoices %}
                     <tr>
-                        <td>{{ invoice.creationDate }}</td>
-                        <td>{{ invoice.value }}</td>
+                        <td>{{ invoice.creationDate|date("d.m.Y H:i") }}</td>
+                        <td>{{ (invoice.value  / 100000)|round(2) }} <small>mBTC</small></td>
                         <td>{{ invoice.memo }}</td>
                     </tr>
                     {% endfor %}
