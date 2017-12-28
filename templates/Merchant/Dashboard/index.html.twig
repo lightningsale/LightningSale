@@ -10,94 +10,70 @@
 {% endblock %}
 
 {% block body %}
-    <div class="container">
-        <div class="row">
-            <div class="col-8 justify-content-center">
+    <div class="container ">
+        <div class="row justify-content-center align-items-center">
+            <div class="col-8">
                 <form class="form form-horizontal">
-                    <div class="form-group form-group-lg">
-                        <label for="inputEmail3" class="col-sm-2 control-label">Description</label>
+                    <div class="form-group row">
+                        <label for="inputEmail3" class="col-sm-2 col-form-label col-form-label-lg">Description</label>
                         <div class="col-sm-9">
-                            <input type="text" class="form-control" placeholder="">
+                            <input type="text" class="form-control form-control-lg" placeholder="">
                         </div>
                     </div>
-                    <div class="form-group form-group-lg">
-                        <label for="inputEmail3" class="col-sm-2 control-label">Charge</label>
+                    <div class="form-group row">
+                        <label for="inputEmail3" class="col-sm-2 col-form-label col-form-label-lg">Charge</label>
                         <div class="col-sm-9">
-                            <input type="number" class="form-control" placeholder="15 $">
+                            <input type="number" class="form-control form-control-lg" placeholder="15 $">
                         </div>
                         <div class="col-sm-1">
                             <button type="submit" class="btn btn-default btn-lg">Create</button>
                         </div>
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-9 col-md-offset-2">
-                            <div class="row ">
-                                <div class="col-xs-4">
-                                    <div class="num">
-                                        <div class="btn btn-default btn-block">1</div>
-                                    </div>
+                    <div class="row justify-content-md-center">
+                        <div class="col-sm-8">
+                            <div class="row">
+                                <div class="col">
+                                    <button type="button" class="btn btn-default btn-block">1</button>
                                 </div>
-                                <div class="col-xs-4">
-                                    <div class="num">
-                                        <div class="btn btn-default btn-block">2</div>
-                                    </div>
+                                <div class="col">
+                                    <button type="button" class="btn btn-default btn-block">2</button>
                                 </div>
-                                <div class="col-xs-4">
-                                    <div class="num">
-                                        <div class="btn btn-default btn-block">3</div>
-                                    </div>
+                                <div class="col">
+                                    <button type="button" class="btn btn-default btn-block">3</button>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-xs-4">
-                                    <div class="num">
-                                        <div class="btn btn-default btn-block">4</div>
-                                    </div>
+                                <div class="col">
+                                    <button type="button" class="btn btn-default btn-block">4</button>
                                 </div>
-                                <div class="col-xs-4">
-                                    <div class="num">
-                                        <div class="btn btn-default btn-block">5</div>
-                                    </div>
+                                <div class="col">
+                                    <button type="button" class="btn btn-default btn-block">5</button>
                                 </div>
-                                <div class="col-xs-4">
-                                    <div class="num">
-                                        <div class="btn btn-default btn-block">6</div>
-                                    </div>
+                                <div class="col">
+                                    <button type="button" class="btn btn-default btn-block">6</button>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-xs-4">
-                                    <div class="num">
-                                        <div class="btn btn-default btn-block">7</div>
-                                    </div>
+                                <div class="col">
+                                    <button type="button" class="btn btn-default btn-block">7</button>
                                 </div>
-                                <div class="col-xs-4">
-                                    <div class="num">
-                                        <div class="btn btn-default btn-block">8</div>
-                                    </div>
+                                <div class="col">
+                                    <button type="button" class="btn btn-default btn-block">8</button>
                                 </div>
-                                <div class="col-xs-4">
-                                    <div class="num">
-                                        <div class="btn btn-default btn-block">9</div>
-                                    </div>
+                                <div class="col">
+                                    <button type="button" class="btn btn-default btn-block">9</button>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-xs-4">
-                                    <div class="num">
-                                        <div class="btn btn-default btn-block">Clear</div>
-                                    </div>
+                                <div class="col">
+                                    <button type="button" class="btn btn-default btn-block">Clear</button>
                                 </div>
-                                <div class="col-xs-4">
-                                    <div class="num">
-                                        <div class="btn btn-default btn-block">0</div>
-                                    </div>
+                                <div class="col">
+                                    <button type="button" class="btn btn-default btn-block">0</button>
                                 </div>
-                                <div class="col-xs-4">
-                                    <div class="num">
-                                        <div class="btn btn-default btn-block">Delete</div>
-                                    </div>
+                                <div class="col">
+                                    <button type="button" class="btn btn-default btn-block">Delete</button>
                                 </div>
                             </div>
                         </div>
@@ -109,7 +85,15 @@
     <br><br><br>
 
     <div class="container">
-        <table class="table">
+        <table class="table" style="table-layout: fixed; width: 100%;">
+            <thead class="table-dark">
+            <tr>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+            </thead>
             <tbody>
             {% for invoice in invoices %}
                 <tr>
@@ -128,11 +112,12 @@
                             <img src='{{ qrcode_path(invoice.qrCodeMessage, {'size': 150, 'margin': 0}) }}'
                                  alt='LightningCode'>
                         </td>
-                        <td colspan="3">
-                            <span style="word-break: break-all">{{ invoice.qrCodeMessage }}</span>
+                        <td style="word-break: break-all; display: inline-block;">
+                            {{ invoice.qrCodeMessage }}
                         </td>
+                        <td></td>
+                        <td></td>
                     </tr>
-
                 {% endif %}
             {% endfor %}
             </tbody>
