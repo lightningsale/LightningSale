@@ -10,16 +10,16 @@ namespace App\Entity;
 
 
 use Doctrine\ORM\Mapping as ORM;
-use LightningSale\LndRest\Model\Invoice;
+use LightningSale\LndRest\Model\Invoice as LndInvoice;
 use LightningSale\LndRest\Resource\LndClient;
 
 /**
  * Class Transaction
  * @package App\Entity
  * @ORM\Entity
- * @ORM\Table(name="transactions")
+ * @ORM\Table(name="invoices")
  */
-class Transaction
+class Invoice
 {
 
     /**
@@ -47,12 +47,12 @@ class Transaction
     /**
      * Transaction constructor.
      */
-    public function __construct(Invoice $invoice)
+    public function __construct(LndInvoice $invoice)
     {
         $this->rHashString = $invoice->getRHash();
     }
 
-    public function getInvoice(LndClient $lndClient): Invoice
+    public function getInvoice(LndClient $lndClient): LndInvoice
     {
         return $lndClient->lookupInvoice($this->rHashString);
     }

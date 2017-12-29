@@ -17,17 +17,32 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarCollapse">
+            {% if app.user %}
             <ul class="navbar-nav mr-auto">
-                {% block headerLeft %}
-                {% endblock %}
+                <li class="nav-item"><a href="{{ path('login_out') }}" class="nav-link">
+                        <i class="fa fa-sign-out"></i> Sign out</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ path('cashier_dashboard_index') }}" class="nav-link">
+                        <i class="fa fa-home"></i> Dashboard
+                    </a>
+                </li>
             </ul>
+            {% endif %}
 
             <h3 class="text-muted mr-auto">LightningSale</h3>
 
+            {% if app.user %}
             <ul class="navbar-nav float-right">
-                {% block headerRight %}
-                {% endblock %}
+                <li class="nav-item"><a href="{{ path('info_index') }}" class="nav-link"><i class="fa fa-info"></i> Info</a></li>
+                <li class="nav-item"><a href="#" class="nav-link"><i class="fa fa-user"></i> Profile</a></li>
+                {% if app.user is Merchant %}
+                    <li class="nav-item"><a href="{{ path('settings_index') }}" class="nav-link"><i class="fa fa-cog"></i> Settings</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link"><i class="fa fa-users"></i> Users</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link"><i class="fa fa-dollar"></i> Transactions</a></li>
+                {% endif %}
             </ul>
+            {% endif %}
         </div>
     </div>
     </nav>

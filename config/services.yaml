@@ -2,32 +2,24 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     lnd_cert: "%kernel.project_dir%/var/lnd/tls.cert"
+    external_ip: "%env(EXTERNALIP)%"
 
 services:
-    # default configuration for services in *this* file
     _defaults:
-        autowire: true      # Automatically injects dependencies in your services.
-        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
-        public: false       # Allows optimizing the container by removing unused services; this also means
-                            # fetching services directly from the container via $container->get() won't work.
-                            # The best practice is to be explicit about your dependencies anyway.
+        autowire: true
+        autoconfigure: true
+        public: false
 
-    # makes classes in src/ available to be used as services
-    # this creates a service per class whose id is the fully-qualified class name
     App\:
         resource: '../src/*'
         exclude: '../src/{Entity,Migrations,Tests}'
 
-    # controllers are imported separately to make sure services can be injected
-    # as action arguments even if you don't extend any base controller class
     App\Controller\:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
     LightningSale\LndRest\Resource\LndClient:
         class: LightningSale\LndRest\Resource\LndClient
         factory: ['@App\Service\LightningServiceFactory','getLndClient']
     App\Service\LightningServiceFactory:
-        arguments: ["%lnd_cert%", "%env(LND_RPC_PASSWORD)%", "%env(LND_RPC_USERNAME)%", "%env(LND_HOST)%", "%env(LND_PORT)%"]
+        arguments: ["%lnd_cert%", "%env(RPCPASS)%", "%env(RPCUSER)%", "%env(LND_HOST)%", "%env(LND_PORT)%"]

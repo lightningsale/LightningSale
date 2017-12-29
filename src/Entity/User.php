@@ -23,7 +23,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * @ORM\DiscriminatorColumn(name="type",type="integer")
  * @ORM\DiscriminatorMap({
  *      0 = "App\Entity\Cashier",
- *      1 = "App\Entity\Cashier"
+ *      1 = "App\Entity\Merchant"
  * })
  */
 abstract class User implements UserInterface, EquatableInterface

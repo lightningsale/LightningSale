@@ -24,7 +24,7 @@ security:
                 path:     '/'
                 always_remember_me: true
             logout:
-                path:   '/logout'
+                path:   login_out
                 invalidate_session: false
 
             guard:

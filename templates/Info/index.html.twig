@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <td>Network</td>
+                            <td>{{ info.testnet ? 'TESTNET' : 'MAINNET' }}</td>
+                        </tr>
+                        <tr>
+                            <td>Synced</td>
+                            <td>{{ info.syncedToChain ? 'Yes' : 'No' }} (height: {{ info.blockHeight }})</td>
+                        </tr>
+                        <tr>
+                            <td>Identity</td>
+                            <td style="display: inline-block; word-break: break-all">{{ info.identityPubkey }}</td>
+                        </tr>
+                        <tr>
+                            <td>Active channels</td>
+                            <td>{{ info.numActiveChannels }}</td>
+                        </tr>
+                        <tr>
+                            <td>Pending channels</td>
+                            <td>{{ info.numPendingChannels }}</td>
+                        </tr>
+                        <tr>
+                            <td>Peers</td>
+                            <td>{{ info.numPeers }}</td>
+                        </tr>
+                        <tr>
+                            <td>IP</td>
+                            <td>{{ externalIp }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-4">
+                <img style="width: 100%" src="{{ qrcode_path(info.identityPubkey ~ '@' ~ externalIp ~ ':' ~ externalPort) }}">
+                <span>{{ info.identityPubkey ~ '@' ~ externalIp ~ ':' ~ externalPort }}</span>
+            </div>
+        </div>
+    </div>
+{% endblock %}

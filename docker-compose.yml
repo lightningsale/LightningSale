@@ -4,15 +4,10 @@ services:
   lnd:
     image: lightningsale/docker-lnd
     build:
-      context: ../
+      context: ../docker-lnd
       dockerfile: docker/lnd/Dockerfile
-    environment:
-      - RPCUSER=lightningsale
-      - RPCPASS=lightningsale
-      - NETWORK=testnet
-      - CHAIN=bitcoin
-      - DEBUG=info
-      - EXTERNALIP=127.0.0.1
+    env_file:
+      - .env
     volumes:
       - lnd:/root/.lnd
     ports:
@@ -44,7 +39,10 @@ services:
     image: mysql
     ports:
       - 3307:3306
+    volumes:
+      - mysql:/var/lib/mysql
     environment:
       - MYSQL_ROOT_PASSWORD=abcd1234
 volumes:
   lnd: ~
+  mysql: ~

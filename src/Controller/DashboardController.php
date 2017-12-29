@@ -8,6 +8,7 @@
 
 namespace App\Controller;
 use App\Entity\Payment;
+use LightningSale\LndRest\Resource\LndClient;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,13 +25,12 @@ class DashboardController extends Controller
     /**
      * @Route("/", name="index")
      */
-    public function indexAction(): Response
+    public function indexAction(LndClient $lndClient): Response
     {
-        /** @var Payment[] $invoices */
-        $invoices = [];
-        foreach (range(0,100) as $index)
-            $invoices[] = new Payment(Payment::STATE_PAID, random_int(100,1000)* 10,"NOK");
+        $invoices = $lndClient->listInvoices();
 
-        return $this->render("Dashboard/index.html.twig", ['invoices' => $invoices]);
+        return $this->render("Dashboard/index.html.twig", [
+            'invoices' => $invoices
+        ]);
     }
 }

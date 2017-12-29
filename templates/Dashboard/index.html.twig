@@ -1,14 +1,5 @@
 {% extends 'base.html.twig' %}
 
-{% block headerLeft %}
-    <li class="nav-item"><a href="#" class="nav-link"><i class="fa fa-sign-out"></i> Sign out</a></li>
-{% endblock %}
-
-{% block headerRight %}
-    <li class="nav-item"><a href="#" class="nav-link"><i class="fa fa-user"></i> Profile</a></li>
-    <li class="nav-item"><a href="{{ path('settings_index') }}" class="nav-link"><i class="fa fa-cog"></i> Settings</a></li>
-{% endblock %}
-
 {% block body %}
     <div class="container ">
         <div class="row justify-content-center align-items-center">
@@ -97,9 +88,9 @@
             <tbody>
             {% for invoice in invoices %}
                 <tr>
-                    <td>{{ invoice.createdAt|date('d.m.Y H:i') }}</td>
-                    <td>{{ invoice.niceAmount }}</td>
-                    <td>{% if loop.first %}Waiting{% else %}{{ invoice.niceState }}{% endif %}</td>
+                    <td>{{ invoice.creationDate|date("d.m.Y H:i") }}</td>
+                    <td>{{ (invoice.value  / 100000)|round(2) }} <small>mBTC</small></td>
+                    <td>{{ invoice.settled ? 'Paid' : 'Waiting' }}</td>
                     <td>
                         <a href="#">{% if loop.first %}Hide{% else %}Show{% endif %}</a>
                         <a href="#">Details</a>
@@ -109,13 +100,13 @@
                 {% if loop.first %}
                     <tr>
                         <td>
-                            <img src='{{ qrcode_path(invoice.qrCodeMessage, {'size': 150, 'margin': 0}) }}'
+                            <img src='{{ qrcode_path('lightning:' ~ invoice.paymentRequest, {'size': 150, 'margin': 0}) }}'
                                  alt='LightningCode'>
                         </td>
                         <td style="word-break: break-all; display: inline-block;">
-                            {{ invoice.qrCodeMessage }}
+                            lightning:{{ invoice.paymentRequest }}
                         </td>
-                        <td></td>
+                        <td>{{ invoice.memo }}</td>
                         <td></td>
                     </tr>
                 {% endif %}
