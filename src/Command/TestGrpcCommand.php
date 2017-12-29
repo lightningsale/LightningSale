@@ -10,6 +10,7 @@ namespace App\Command;
 
 
 use GuzzleHttp\Client;
+use LightningSale\LndRest\Model\SendRequest;
 use LightningSale\LndRest\Resource\LndClient;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -34,7 +35,8 @@ class TestGrpcCommand extends Command
             'verify' => __DIR__ . '/../../var/lnd/tls.cert',
         ]);
         $lightning = new LndClient($client);
-        dump($lightning->addInvoice("none", 50000));
+        $paymentRequest = new SendRequest("02f220b5f4915661f004f9015496e2a7b38c123af1021390d5d2501831830304f9", "5000", "45bd4c38359e8bac1de6dbd124aa3532c7e326c5080fc800660fec24f5bc8e9d");
+        dump($lightning->sendPaymentSync($paymentRequest));
 
     }
 
