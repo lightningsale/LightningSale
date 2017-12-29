@@ -49,7 +49,6 @@ class DashboardController extends Controller
         $form->add("save", SubmitType::class);
 
         $invoices = $this->lndClient->listInvoices();
-        dump($invoices);
         return $this->render("Dashboard/index.html.twig", [
             'invoices' => $invoices,
             'form' => $form->createView()
