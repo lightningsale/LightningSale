@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container ">
+        <div class="row justify-content-center align-items-center">
+            <div class="col-4">
+                <img src='{{ qrcode_path('lightning:' ~ invoice.paymentRequest, {'size': 150, 'margin': 0}) }}'
+                     alt='LightningCode'>
+            </div>
+            <div class="col-8" style="word-break: break-all">
+                lightning:{{ invoice.paymentRequest }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

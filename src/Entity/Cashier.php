@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Created by PhpStorm.
  * User: richard
@@ -7,7 +7,10 @@
  */
 
 namespace App\Entity;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use LightningSale\LndRest\Resource\LndClient;
+use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
 
 /**
  * Class Cashier
@@ -16,8 +19,39 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Cashier extends User
 {
+    /**
+     * @var Invoice[]|ArrayCollection
+     * @ORM\OneToMany(targetEntity="App\Entity\Invoice", cascade={"persist"}, mappedBy="createdBy")
+     */
+    protected $invoices;
+
+    /**
+     * @return Invoice[]|ArrayCollection
+     */
+    public function getInvoices()
+    {
+        return $this->invoices;
+    }
+
+    public function __construct(string $email, EncoderFactoryInterface $encoderFactory, string $rawPassword)
+    {
+        parent::__construct($email, $encoderFactory, $rawPassword);
+
+        $this->invoices = new ArrayCollection();
+    }
+
     public function getRoles(): array
     {
         return ["ROLE_CASHIER"];
+    }
+
+    public function createInvoice(LndClient $lndClient, string $amount, string $memo = "", int $timeout = 3600): Invoice
+    {
+        $addInvoiceResponse = $lndClient->addInvoice($memo, $amount, $timeout);
+
+        $invoice = Invoice::fromAddInvoiceResponse($addInvoiceResponse, $this, $memo, $amount);
+        $this->invoices->add($invoice);
+
+        return $invoice;
     }
 }

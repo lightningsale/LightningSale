@@ -29,7 +29,7 @@ class InfoController extends Controller
     public function infoAction(LndClient $lndClient): Response
     {
         $externalIp = $this->getParameter("external_ip");
-        $externalPort = 9735;
+        $externalPort = $this->getParameter("external_port");
         $info = $lndClient->getInfo();
         return $this->render("Info/index.html.twig", ['info' => $info, 'externalIp' => $externalIp, 'externalPort' => $externalPort]);
     }

@@ -11,7 +11,7 @@ services:
     volumes:
       - lnd:/root/.lnd
     ports:
-      - 9735:9735
+      - 9736:9736
     expose: ["10009", "8080"]
     entrypoint: ["./start-lnd.sh"]
     hostname: lnd
@@ -20,6 +20,7 @@ services:
       - "--neutrino.connect=faucet.lightning.community"
       - "--autopilot.active"
       - "--no-macaroons"
+      - "--peerport=9736"
   pos:
     build:
       dockerfile: Dockerfile.xdebug
@@ -34,7 +35,6 @@ services:
     volumes:
       - .:/var/www
       - lnd:/var/www/var/lnd
-
   mysql:
     image: mysql
     ports:
