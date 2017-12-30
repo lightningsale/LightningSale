@@ -15,6 +15,7 @@ Or use github.com/lightningsale/LightningSale and `docker-compose up`
 
 ## First setup:
  - git clone https://github.com/lightningsale/LightningSale
+ - Copy `.env.dist` to `.env` and modify the variables acordingly to your setup (the only requirement is `EXTERNALIP`)
  - docker-compose up
  - docker-compose exec pos php bin/console doctrine:database:create
  - docker-compose exec pos php bin/console doctrine:migrate:migrate
