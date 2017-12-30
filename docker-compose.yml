@@ -3,9 +3,6 @@ version: "2.1"
 services:
   lnd:
     image: lightningsale/docker-lnd
-    build:
-      context: ../docker-lnd
-      dockerfile: docker/lnd/Dockerfile
     env_file:
       - .env
     volumes:
