@@ -1,7 +1,7 @@
 FROM richard87/php-base
 
 COPY composer.json composer.lock symfony.lock ./
-RUN touch .env
+COPY .env.dist ./.env
 RUN composer install --no-scripts --no-autoloader
 
 COPY ./ ./
