@@ -2,120 +2,118 @@
 
 {% block body %}
     <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <table class="table" style="table-layout: fixed; width: 100%;">
-                    <thead class="table-dark">
-                    <tr>
-                        <th>Local Balance</th>
-                        <th>Channel ID</th>
-                        <th>Remote Balance</th>
-                        <th>Capacity</th>
-                        <th>Status</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for channel in channels %}
+        <div class="row card-deck">
+                <div class="card">
+                    <div class="card-header">Channels</div>
+                    <div class="card-body">
+                        <canvas id="channel-chart"></canvas>
+                    </div>
+                    <div class="card-text">
+                        <a href="#" class="btn btn-link">Details</a>
+                        <a href="#" class="btn btn-link">New</a>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">Wallet</div>
+                    <table class="table card-body" style="table-layout: fixed; width: 100%;">
+                        <tbody>
                         <tr>
-                            <td>{{ (channel.localBalance / 100000)|round(2) }} <small>mBTC</small></td>
-                            <td>{{ channel.chanId }}</td>
-                            <td>{{ (channel.remoteBalance / 100000)|round(2) }} <small>mBTC</small></td>
-                            <td>{{ (channel.capacity / 100000)|round(2) }} <small>mBTC</small></td>
-                            <td>Open</td>
-                        </tr>
-                    {% endfor %}
-                    {% for channel in pendingChannels.pendingOpenChannels %}
-                        <tr>
-                            <td>{{ channel.channel.localBalance }}</td>
-                            <td></td>
-                            <td>{{ channel.channel.remoteBalance }}</td>
-                            <td>{{ channel.channel.capacity }}</td>
-                            <td>Opening</td>
-                        </tr>
-                    {% endfor %}
-                    {% for channel in pendingChannels.pendingClosingChannels %}
-                        <tr>
-                            <td>{{ channel.channel.localBalance }}</td>
-                            <td></td>
-                            <td>{{ channel.channel.remoteBalance }}</td>
-                            <td>{{ channel.channel.capacity }}</td>
-                            <td>Closing</td>
-                        </tr>
-                    {% endfor %}
-                    {% for channel in pendingChannels.pendingClosingChannels %}
-                        <tr>
-                            <td>{{ channel.channel.localBalance }}</td>
-                            <td></td>
-                            <td>{{ channel.channel.remoteBalance }}</td>
-                            <td>{{ channel.channel.capacity }}</td>
-                            <td>Force Closing</td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            <div class="col-md-8">
-                <table class="table" style="table-layout: fixed; width: 100%;">
-                    <thead class="table-dark">
-                    <tr>
-                        <th>Peer adress</th>
-                        <th>Response</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for peer in peers %}
-                        <tr>
-                            <td>{{ peer.address }}</td>
-                            <td>{{ (peer.pingTime / 60)|round }} <small>s</small></td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            <div class="col-md-4">
-                <table class="table" style="table-layout: fixed; width: 100%;">
-                    <thead class="table-dark">
-                    <tr>
-                        <th>Amount</th>
-                        <th>Status</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>{{ (wallet.confirmedBalance / 100000)|round(2) }} <small>mBTC</small></td>
                             <td>Confirmed</td>
+                            <td style="text-align: right;">{{ wallet.confirmedBalance|satoshiToMilliBtc }}
+                                <small>mBTC</small>
+                            </td>
                         </tr>
                         <tr>
-                            <td>{{ (wallet.unconfirmedBalance / 100000)|round(2) }} <small>mBTC</small></td>
                             <td>Unconfirmed</td>
+                            <td style="text-align: right;">{{ wallet.unconfirmedBalance|satoshiToMilliBtc }}
+                                <small>mBTC</small>
+                            </td>
                         </tr>
                         <tr>
-                            <td>{{ (wallet.totalBalance / 100000)|round(2) }} <small>mBTC</small></td>
-                            <td>Total</td>
+                            <td>In Channels:</td>
+                            <td style="text-align: right;">{{ channelBalance|satoshiToMilliBtc }}
+                                <small>mBTC</small>
+                            </td>
                         </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="col-md-12">
+                        <tr>
+                            <td>Total</td>
+                            <td style="text-align: right;">{{ (wallet.totalBalance + channelBalance)|satoshiToMilliBtc }}
+                                <small>mBTC</small>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="card-text">
+                        <a href="#" class="btn btn-link">Widthdraw</a>
+                        <a href="#" class="btn btn-link">Deposit</a>
+                    </div>
+                </div>
+        </div>
+
+        <hr>
+
+            <div class="card">
+                <div class="card-header">Invoices</div>
                 <table class="table" style="table-layout: fixed; width: 100%;">
-                    <thead class="table-dark">
-                    <tr>
-                        <th>Invoice Date</th>
-                        <th>Value</th>
-                        <th>Memo</th>
-                    </tr>
-                    </thead>
                     <tbody>
                     {% for invoice in pendingInvoices %}
-                    <tr>
-                        <td>{{ invoice.creationDate|date("d.m.Y H:i") }}</td>
-                        <td>{{ (invoice.value  / 100000)|round(2) }} <small>mBTC</small></td>
-                        <td>{{ invoice.memo }}</td>
-                    </tr>
+                        <tr>
+                            <td>{{ invoice.creationDate|date("d.m.Y H:i") }}</td>
+                            <td>{{ (invoice.value  / 100000)|round(2) }}
+                                <small>mBTC</small>
+                            </td>
+                            <td>{{ invoice.memo }}</td>
+                        </tr>
                     {% endfor %}
                     </tbody>
                 </table>
             </div>
-        </div>
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        new Chart(document.getElementById("channel-chart"), {
+            "type": "bar",
+            "data": {
+                "labels": {{ channelDatasets.labels|json_encode|raw }},
+                "datasets": [{
+                    "label": "Local Balance",
+                    "data": {{ channelDatasets.local|json_encode|raw }},
+                    "fill": false,
+                    "backgroundColor": {{ channelDatasets.local_background|json_encode|raw }},
+                    "borderColor": {{ channelDatasets.local_border|json_encode|raw }},
+                    "borderWidth": 1
+                },
+                    {
+                        "label": "Remote Balance",
+                        "data": {{ channelDatasets.remote|json_encode|raw }},
+                        "fill": false,
+                        "backgroundColor": {{ channelDatasets.remote_background|json_encode|raw }},
+                        "borderColor": {{ channelDatasets.remote_border|json_encode|raw }},
+                        "borderWidth": 1
+                    }
+                ]
+            },
+            "options": {
+                "maintainAspectRatio": false,
+                "scales": {
+                    "yAxes": [{
+                        "ticks": {
+                            "beginAtZero": true,
+                            "callback": function (value) {
+                                return value.toLocaleString("en-US", "latn", {
+                                    "style": "decimal",
+                                }) + " mBTC";
+                            }
+                        },
+                        "stacked": true
+                    }],
+                    "xAxes": [{
+                        "stacked": true
+                    }]
+                }
+            }
+        });
+    </script>
 {% endblock %}

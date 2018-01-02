@@ -3,12 +3,17 @@ $fa-font-path: "~font-awesome/fonts";
 @import '~bootstrap/scss/bootstrap';
 @import "~font-awesome/scss/font-awesome";
 
-.navbar {
-  position: relative;
+.navbar-brand {
+  float: none;
 }
-.brand {
+
+.navbar-center
+{
   position: absolute;
-  left: 50%;
-  margin-left: -50px !important;  /* 50% of your logo width */
-  display: block;
+  width: 100%;
+  left: 0;
+  top: 0;
+  text-align: center;
+  margin: auto;
+  height:100%;
 }

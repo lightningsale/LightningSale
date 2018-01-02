@@ -1,5 +1,4 @@
-var Encore = require('@symfony/webpack-encore');
-
+const Encore = require('@symfony/webpack-encore');
 Encore
     // the project directory where compiled assets will be stored
     .setOutputPath('web/build/')
@@ -19,7 +18,11 @@ Encore
          resolve_url_loader: false
      })
 
-    .autoProvidejQuery()
+    .autoProvideVariables({
+        $: 'jquery',
+        jQuery: 'jquery',
+        Chart: 'chart'
+    })
 ;
 
 module.exports = Encore.getWebpackConfig();

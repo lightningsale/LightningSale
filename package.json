@@ -14,5 +14,8 @@
         "dev": "encore dev",
         "watch": "encore dev --watch",
         "build": "encore production"
+    },
+    "dependencies": {
+        "chart.js": "^2.7.1"
     }
 }
