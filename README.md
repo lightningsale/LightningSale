@@ -3,15 +3,34 @@
 Set up the .env file or environment variables for database and LND config!
 Or use github.com/lightningsale/LightningSale and `docker-compose up`
 
+**This software is alpha only, do not use with real money!**
+## Known issues:
+- `closeChannel` doesn't work
+  - Also missing force close functionality
+- `lookupInvoice` doesnt work 
+
 ## Milestone 1
- 1. [X] Set up users and authentication (Security!)
- 2. Set up Funding, Peers and Channels
- 3. Transactions
- 4. Backups and Recovery
+ 1. [ ] Set up users and authentication (Security!)
+ 2. [X] Funding
+ 3. [ ] Peers (Connecting doesn't work so good)
+ 4. [ ] Channels (Missing open/close channel, missing support in LND REST)
+ 5. [X] Transactions
+ 6. [ ] Invoices
+    - [X] Create invoice
+    - [X] Pending invoices
+    - [ ] Remove old unpaid invoices
+    - [ ] Invoice details (missing support in LND REST)
 
 ## Milestone 2
  1. [ ] Design / UX
+ 2. [ ] Realtime information
  2. [ ] Secure deployments / Auditing
+ 3. [ ] Streamline deployments (collect all env variables in docker-compose.yml etc)
+ 4. [ ] Backups and Recovery
+ 5. [ ] Encrypted wallet
+ 
+## Milestone 3
+ 1. [ ] Email notifications
 
 ## First setup:
  - git clone https://github.com/lightningsale/LightningSale
@@ -36,7 +55,7 @@ Or use github.com/lightningsale/LightningSale and `docker-compose up`
  - [X] -LND gRPC Client- Use LND Rest Client
  - [X] Auth Component (Handle owners and Users)
  - [X] QR Code
- - [ ] Payments Dashboard (Should we just use LND as a source of truth, or store all payments/transactions in our own database)
+ - [X] Payments Dashboard
 
 
 ## Setup

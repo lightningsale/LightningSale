@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Created by PhpStorm.
  * User: richard
@@ -9,15 +10,14 @@
 namespace App\Controller;
 
 
+use App\Form\NewChannelType;
 use App\Form\WithdrawFundsType;
 use App\Service\Twig\ConvertSatoshi;
 use LightningSale\LndRest\Model\ActiveChannel;
-use LightningSale\LndRest\Model\PendingChannelResponse;
-use LightningSale\LndRest\Model\PendingChannelResponseClosedChannel;
-use LightningSale\LndRest\Model\PendingChannelResponseForceClosedChannel;
-use LightningSale\LndRest\Model\PendingChannelResponsePendingOpenChannel;
+use LightningSale\LndRest\Model\Peer;
 use LightningSale\LndRest\Resource\LndClient;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,6 +26,7 @@ use Symfony\Component\HttpFoundation\Response;
  * Class SettingsController
  * @package App\Controller
  * @Route("/dashboard/settings", name="settings_")
+ * @Security("is_granted('ROLE_MERCHANT')")
  */
 class SettingsController extends Controller
 {
@@ -40,15 +41,16 @@ class SettingsController extends Controller
     /**
      * @Route("/", name="index")
      */
-    public function indexAction(): Response
+    public function indexAction(ConvertSatoshi $convertSatoshi): Response
     {
         $channels = $this->lndClient->listChannels();
         $pendingChannels = $this->lndClient->pendingChannels();
+        $channelDatasets = ChannelsController::orderChartData($channels, $pendingChannels, $convertSatoshi);
         $wallet = $this->lndClient->walletBalance();
         $pendingInvoices = $this->lndClient->listInvoices(true);
-        $channelDatasets = $this->orderChartData($channels, $pendingChannels);
         $newWitnessAddress = $this->lndClient->newWitnessAddress();
         $withdrawForm = $this->createForm(WithdrawFundsType::class, null, ['action' => $this->generateUrl("settings_withdraw")]);
+        $newChannelForm = $this->createForm(NewChannelType::class, null, ['action' => $this->generateUrl("settings_new_channel")]);
 
         $balanceInChannels = array_reduce($channels, function(int $carry, ActiveChannel $channel) {return $carry + (int) $channel->getLocalBalance();}, 0);
 
@@ -61,6 +63,7 @@ class SettingsController extends Controller
             'channelDatasets' => $channelDatasets,
             'newAddress' => $newWitnessAddress,
             'withdrawForm' => $withdrawForm->createView(),
+            'newChannelForm' => $newChannelForm->createView(),
         ]);
     }
 
@@ -85,113 +88,53 @@ class SettingsController extends Controller
     }
 
     /**
-     * @param ActiveChannel[] $channels
-     * @param PendingChannelResponse $pendingChannels
-     * @return array
+     * @Route("/new_channel", name="new_channel")
      */
-    private function orderChartData(array $channels, PendingChannelResponse $pendingChannels): array
-    {
-        return [
-            'local' => array_merge(
-                array_map(function (ActiveChannel $ac) {
-                    return ConvertSatoshi::satoshiToMilliBtc($ac->getLocalBalance());
-                }, $channels),
-                array_map(function (PendingChannelResponsePendingOpenChannel $po) {
-                    return ConvertSatoshi::satoshiToMilliBtc($po->getChannel()->getLocalBalance());
-                }, $pendingChannels->getPendingOpenChannels()),
-                array_map(function (PendingChannelResponseClosedChannel $pc) {
-                    return ConvertSatoshi::satoshiToMilliBtc($pc->getChannel()->getLocalBalance());
-                }, $pendingChannels->getPendingClosingChannels()),
-                array_map(function (PendingChannelResponseForceClosedChannel $pf) {
-                    return ConvertSatoshi::satoshiToMilliBtc($pf->getChannel()->getLocalBalance());
-                }, $pendingChannels->getPendingForceClosingChannels())
-            ),
-            'remote' => array_merge(
-                array_map(function (ActiveChannel $ac) {
-                    return ConvertSatoshi::satoshiToMilliBtc($ac->getRemoteBalance());
-                }, $channels),
-                array_map(function (PendingChannelResponsePendingOpenChannel $po) {
-                    return ConvertSatoshi::satoshiToMilliBtc($po->getChannel()->getRemoteBalance());
-                }, $pendingChannels->getPendingOpenChannels()),
-                array_map(function (PendingChannelResponseClosedChannel $pc) {
-                    return ConvertSatoshi::satoshiToMilliBtc($pc->getChannel()->getRemoteBalance());
-                }, $pendingChannels->getPendingClosingChannels()),
-                array_map(function (PendingChannelResponseForceClosedChannel $pf) {
-                    return ConvertSatoshi::satoshiToMilliBtc($pf->getChannel()->getRemoteBalance());
-                }, $pendingChannels->getPendingForceClosingChannels())
-            ),
-            'labels' => array_merge(
-                array_map(function (ActiveChannel $ac) {
-                    return "Open";
-                }, $channels),
-                array_map(function (PendingChannelResponsePendingOpenChannel $po) {
-                    return "Pending Open";
-                }, $pendingChannels->getPendingOpenChannels()),
-                array_map(function (PendingChannelResponseClosedChannel $pc) {
-                    return "Pending Close";
-                }, $pendingChannels->getPendingClosingChannels()),
-                array_map(function (PendingChannelResponseForceClosedChannel $pf) {
-                    return "Pending Force Close";
-                }, $pendingChannels->getPendingForceClosingChannels())
-            ),
-            'local_background' => array_merge(
-                array_map(function (ActiveChannel $ac) {
-                    return "rgba(255, 205, 86, 0.2)";
-                }, $channels),
-                array_map(function (PendingChannelResponsePendingOpenChannel $po) {
-                    return "rgba(153, 102, 255, 0.2)";
-                }, $pendingChannels->getPendingOpenChannels()),
-                array_map(function (PendingChannelResponseClosedChannel $pc) {
-                    return "rgba(255, 205, 86, 0.2)";
-                }, $pendingChannels->getPendingClosingChannels()),
-                array_map(function (PendingChannelResponseForceClosedChannel $pf) {
-                    return "rgba(201, 203, 207, 0.2)";
-                }, $pendingChannels->getPendingForceClosingChannels())
-            ),
-            'local_border' => array_merge(
-                array_map(function (ActiveChannel $ac) {
-                    return "rgb(255, 205, 86)";
-                }, $channels),
-                array_map(function (PendingChannelResponsePendingOpenChannel $po) {
-                    return "rgb(153, 102, 255)";
-                }, $pendingChannels->getPendingOpenChannels()),
-                array_map(function (PendingChannelResponseClosedChannel $pc) {
-                    return "rgb(255, 205, 86)";
-                }, $pendingChannels->getPendingClosingChannels()),
-                array_map(function (PendingChannelResponseForceClosedChannel $pf) {
-                    return "rgb(201, 203, 207)";
-                }, $pendingChannels->getPendingForceClosingChannels())
-            ),
-            'remote_background' => array_merge(
-                array_map(function (ActiveChannel $ac) {
-                    return "rgba(75, 192, 192, 0.2)";
-                }, $channels),
-                array_map(function (PendingChannelResponsePendingOpenChannel $po) {
-                    return "rgba(153, 102, 255, 0.2)";
-                }, $pendingChannels->getPendingOpenChannels()),
-                array_map(function (PendingChannelResponseClosedChannel $pc) {
-                    return "rgba(75, 192, 192, 0.2)";
-                }, $pendingChannels->getPendingClosingChannels()),
-                array_map(function (PendingChannelResponseForceClosedChannel $pf) {
-                    return "rgba(201, 203, 207, 0.2)";
-                }, $pendingChannels->getPendingForceClosingChannels())
-            ),
-            'remote_border' => array_merge(
-                array_map(function (ActiveChannel $ac) {
-                    return "rgb(75, 192, 192)";
-                }, $channels),
-                array_map(function (PendingChannelResponsePendingOpenChannel $po) {
-                    return "rgb(153, 102, 255)";
-                }, $pendingChannels->getPendingOpenChannels()),
-                array_map(function (PendingChannelResponseClosedChannel $pc) {
-                    return "rgb(201, 203, 207)";
-                }, $pendingChannels->getPendingClosingChannels()),
-                array_map(function (PendingChannelResponseForceClosedChannel $pf) {
-                    return "rgb(75, 192, 192)";
-                }, $pendingChannels->getPendingForceClosingChannels())
-            )
-        ];
+    public function newChannelAction(Request $request) {
+        $form = $this->createForm(NewChannelType::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $pubKey = $data['pubkey'];
+            $host = $data['host'];
+            $peer = $this->findPeer($pubKey);
+            if (!$peer)
+                $this->lndClient->connectPeer($pubKey, $host, true);
+
+            $timeout = 60;
+            while ($timeout>0 && !$peer){
+                $peer = $this->findPeer($pubKey);
+                if (!$peer)
+                    sleep(1);
+            }
+            if (!$peer) {
+                $this->addFlash("warning", "Can't connect to peer!");
+                return $this->redirectToRoute("settings_index");
+            }
+
+            $txid = $this->lndClient->openChannelSync($pubKey, $data['amount']);
+
+            $this->addFlash("success", "New channel opened (txid: $txid)");
+            $this->redirectToRoute("settings_index");
+        }
+
+        foreach ($form->getErrors() as $error) {
+            $this->addFlash("warning", $error->getMessage());
+        }
+
+        return $this->redirectToRoute("settings_index");
     }
 
+    private function findPeer($pubKey): ?Peer
+    {
+        $peers = $this->lndClient->listPeers();
+        dump($peers);
+        foreach ($peers as $p)
+            if ($p->getPubKey() === $pubKey)
+                return $p;
+
+        return null;
+    }
 
 }

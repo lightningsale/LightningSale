@@ -11,13 +11,15 @@ namespace App\Controller;
 
 use LightningSale\LndRest\Resource\LndClient;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class TransactionsController
  * @package App\Controller
- * @Route("/dashboard/transactions", name="transactions_")
+ * @Route("/dashboard/settings/transactions", name="transactions_")
+ * @Security("is_granted('ROLE_MERCHANT')")
  */
 class TransactionsController extends Controller
 {

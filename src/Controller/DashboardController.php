@@ -19,7 +19,6 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -50,7 +49,7 @@ class DashboardController extends Controller
         ]);
         $form->add("save", SubmitType::class);
 
-        $invoices = $this->lndClient->listInvoices();
+        $invoices = $this->lndClient->listInvoices(true);
         return $this->render("Dashboard/index.html.twig", [
             'invoices' => $invoices,
             'form' => $form->createView()
@@ -78,14 +77,12 @@ class DashboardController extends Controller
     /**
      * @Route("/explorer/{txId}", name="explorer")
      */
-    public function transactionAction(string $txId): Response
+    public function transactionAction(string $txId, LndClient $lndClient): Response
     {
-        $network = $this->getParameter("chain_network");
-        switch ($network) {
-            case "testnet": return new RedirectResponse(sprintf("https://www.blocktrail.com/tBTC/tx/%s", $txId));
-            case "mainnet": return new RedirectResponse(sprintf("https://www.blocktrail.com/BTC/tx/%s", $txId));
-        }
+        $testnet = $lndClient->getInfo()->isTestnet();
+        if ($testnet)
+            return new RedirectResponse(sprintf("https://www.blocktrail.com/tBTC/tx/%s", $txId));
 
-        throw new NotFoundHttpException("Chain network not found!");
+        return new RedirectResponse(sprintf("https://www.blocktrail.com/BTC/tx/%s", $txId));
     }
 }

@@ -16,17 +16,29 @@ class ConvertSatoshi extends \Twig_Extension
     public function getFilters()
     {
         return [
-            new \Twig_SimpleFilter("satoshiToMilliBtc", [$this, 'satoshiToMilliBtc']),
-            new \Twig_SimpleFilter("satoshiToLocal", [$this, 'satoshiToLocal'])
+            new \Twig_SimpleFilter("satoshiToMilliBtc", [$this, 'satoshiToMilliBtc'], ['is_safe' => ['html']]),
+            new \Twig_SimpleFilter("satoshiToLocal", [$this, 'satoshiToLocal'], ['is_safe' => ['html']])
         ];
     }
 
-    public static function satoshiToMilliBtc(string $satoshi, int $round = 2)
+    public function getFunctions()
+    {
+        return [
+            new \Twig_SimpleFunction("localCurrency", [$this, 'localCurrency'])
+        ];
+    }
+
+    public function satoshiToMilliBtc(string $satoshi, int $round = 2)
     {
         return round((float) $satoshi / self::SATOSHI_IN_BTC, $round);
     }
 
-    public static function satoshiToLocal(string $satoshi, int $round = 2, string $currency = null) {
-        return self::satoshiToMilliBtc($satoshi, $round);
+    public function satoshiToLocal(string $satoshi, int $round = 2, string $currency = null) {
+        return $this->satoshiToMilliBtc($satoshi, $round);
+    }
+
+    public function localCurrency()
+    {
+        return "mBTC"; //TODO: Update this!
     }
 }

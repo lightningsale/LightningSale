@@ -1,0 +1,244 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <div class="container">
+
+        <div class="card">
+            <div class="card-header">Channels</div>
+            <div class="card-body" style="height: 15em;">
+                <canvas id="channel-chart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <hr>
+
+        <div class="card">
+            <div class="card-header">Channels</div>
+            <table class="table" style="table-layout: fixed; width: 100%;">
+                <thead>
+                <tr>
+                    <th>Status</th>
+                    <th>Close fee</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for channel in openChannels %}
+                    <tr>
+                        <td><span class="text-success">Open</span> <small class="{{ channel.active? 'text-success' : 'text-warning' }}">({{ channel.active ? 'active' : 'inactive' }})</small></td>
+                        <td>{{ channel.commitFee|satoshiToLocal }} <small>{{ localCurrency() }}</small></td>
+                        <td><small>Local: {{ channel.localBalance|satoshiToLocal }} {{ localCurrency() }}</small></td>
+                        <td><small>Remote {{ channel.remoteBalance|satoshiToLocal }} {{ localCurrency() }}</small></td>
+                        <td class="text-right"><small>Total: {{ (channel.capacity - channel.commitFee) |satoshiToLocal }} {{ localCurrency() }}</small></td>
+                        <td class="text-right">
+                            <a href="{{ path('channels_close', {'id': channel.fundingTxId, 'index': channel.outputIndex, 'force': channel.active ? '0' : '1'}) }}">{{ channel.active ? 'Close' : 'Force-Close' }}</a>
+                            <a target="_blank" href="{{ path('cashier_dashboard_explorer', {'txId': channel.fundingTxId}) }}">Info</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="6" style="padding: 0;">
+                            <canvas style="height: 10px" class="channel-chart"
+                                data-remote="{{ channel.remoteBalance|satoshiToLocal }}"
+                                data-local="{{ channel.localBalance|satoshiToLocal }}"
+                                data-unsettled="{{ channel.unsettledBalance|satoshiToLocal }}"
+                                data-capacity="{{ (channel.capacity - channel.commitFee) |satoshiToLocal }}">
+                            </canvas>
+                        </td>
+                    </tr>
+                {% endfor %}
+
+                {% for channel in pendingChannels.pendingOpenChannels %}
+                    <tr>
+                        <td><span class="text-warning">Pending <small>({{ channel.blocksTillOpen }} blocks until open)</small></span></td>
+                        <td>{{ channel.commitFee|satoshiToLocal }} <small>{{ localCurrency() }}</small></td>
+                        <td><small>Local: {{ channel.channel.localBalance|satoshiToLocal }} {{ localCurrency() }}</small></td>
+                        <td><small>Remote {{ channel.channel.remoteBalance|satoshiToLocal }} {{ localCurrency() }}</small></td>
+                        <td class="text-right"><small>Total: {{ (channel.channel.capacity - channel.commitFee) |satoshiToLocal }} {{ localCurrency() }}</small></td>
+                        <td class="text-right"><a target="_blank" href="{{ path('cashier_dashboard_explorer', {'txId': channel.channel.fundingTxId}) }}">Info</a> </td>
+                    </tr>
+                    <tr>
+                        <td colspan="6" style="padding: 0;">
+                            <canvas style="height: 10px" class="channel-chart"
+                                    data-remote="{{ channel.channel.remoteBalance|satoshiToLocal }}"
+                                    data-local="{{ channel.channel.localBalance|satoshiToLocal }}"
+                                    data-unsettled="0"
+                                    data-capacity="{{ (channel.channel.capacity -channel.commitFee) |satoshiToLocal }}">
+                            </canvas>
+                        </td>
+                    </tr>
+                {% endfor %}
+
+                {% for channel in pendingChannels.pendingClosingChannels %}
+                    <tr>
+                        <td><span class="text-warning">Pending Closing</span></td>
+                        <td></td>
+                        <td><small>Local: {{ channel.channel.localBalance|satoshiToLocal }} {{ localCurrency() }}</small></td>
+                        <td><small>Remote {{ channel.channel.remoteBalance|satoshiToLocal }} {{ localCurrency() }}</small></td>
+                        <td class="text-right"><small>Total: {{ (channel.channel.capacity) |satoshiToLocal }} {{ localCurrency() }}</small></td>
+                        <td class="text-right"><a target="_blank" href="{{ path('cashier_dashboard_explorer', {'txId': channel.closingTxid}) }}">Info</a> </td>
+                    </tr>
+                    <tr>
+                        <td colspan="6" style="padding: 0;">
+                            <canvas style="height: 10px" class="channel-chart"
+                                    data-local="{{ channel.channel.localBalance|satoshiToLocal }}"
+                                    data-remote="{{ channel.channel.remoteBalance|satoshiToLocal }}"
+                                    data-unsettled="0"
+                                    data-capacity="{{ channel.channel.capacity |satoshiToLocal }}">
+                            </canvas>
+                        </td>
+                    </tr>
+                {% endfor %}
+
+                {% for channel in pendingChannels.pendingForceClosingChannels %}
+                    <tr>
+                        <td><span class="text-warning">Force Closing</span></td>
+                        <td></td>
+                        <td><small>Local: {{ channel.channel.localBalance|satoshiToLocal }} {{ localCurrency() }}</small></td>
+                        <td><small>Remote {{ channel.channel.remoteBalance|satoshiToLocal }} {{ localCurrency() }}</small></td>
+                        <td class="text-right"><small>Total: {{ (channel.channel.capacity) |satoshiToLocal }} {{ localCurrency() }}</small></td>
+                        <td class="text-right"><a target="_blank" href="{{ path('cashier_dashboard_explorer', {'txId': channel.closingTxid}) }}">Info</a> </td>
+                    </tr>
+                    <tr>
+                        <td colspan="6" style="padding: 0;">
+                            <canvas style="height: 10px" class="channel-chart"
+                                    data-local="{{ channel.channel.localBalance|satoshiToLocal }}"
+                                    data-remote="{{ channel.channel.remoteBalance|satoshiToLocal }}"
+                                    data-unsettled="0"
+                                    data-capacity="{{ channel.channel.capacity |satoshiToLocal }}">
+                            </canvas>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $(document).ready(function() {
+            $(".channel-chart").each(function() {
+                var localBalance = $(this).data("local");
+                var unsettledBalance = $(this).data("unsettled");
+                var remoteBalance = $(this).data("remote");
+                var capacity = $(this).data("capacity");
+
+                new Chart(this, {
+                    type: 'horizontalBar',
+                    data: {
+                        labels: [],
+                        datasets: [{
+                            data: [localBalance],
+                            fill: false,
+                            backgroundColor: "rgba(255, 205, 86, 0.2)",
+                            borderColor: "rgb(255, 205, 86)",
+                            borderWidth: 1
+                        },{
+                            data: [unsettledBalance],
+                            fill: false,
+                            backgroundColor: "rgba(255, 99, 132, 0.2)",
+                            hoverBackgroundColor: "rgb(255, 99, 132)",
+                            borderWidth: 1
+                        },{
+                            data: [remoteBalance],
+                            fill: false,
+                            backgroundColor: "rgba(75, 192, 192, 0.2)",
+                            borderColor: "rgb(75, 192, 192)",
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true,
+                                    callback: function (value) {
+                                        return value.toLocaleString("en-US", "latn", {
+                                            style: "decimal",
+                                        }) + " {{ localCurrency() }}";
+                                    }
+                                },
+                                stacked: true,
+                                display: false,
+                                gridLines: {
+                                    drawTicks: false
+                                },
+                                scaleLabel: {
+                                    display: false
+                                },
+
+                                categoryPercentage: 1.0,
+                                barPercentage: 1.0
+                            }],
+                            xAxes: [{
+                                stacked: true,
+                                display: false,
+                                ticks: {
+                                    min: 0,
+                                    max: capacity
+                                },
+
+                                categoryPercentage: 1.0,
+                                barPercentage: 1.0
+                            }]
+                        },
+                        legend:{
+                            display:false,
+                            fontSize: 0
+                        },
+                        maintainAspectRatio: false,
+                        tooltips: {
+                            enabled: false
+                        }
+                    }
+                })
+            })
+        });
+        new Chart(document.getElementById("channel-chart"), {
+            "type": "bar",
+            "data": {
+                "labels": {{ channelDatasets.labels|json_encode|raw }},
+                "datasets": [{
+                    "label": "Local Balance",
+                    "data": {{ channelDatasets.local|json_encode|raw }},
+                    "fill": false,
+                    "backgroundColor": {{ channelDatasets.local_background|json_encode|raw }},
+                    "borderColor": {{ channelDatasets.local_border|json_encode|raw }},
+                    "borderWidth": 1
+                }, {
+                    "label": "Remote Balance",
+                    "data": {{ channelDatasets.remote|json_encode|raw }},
+                    "fill": false,
+                    "backgroundColor": {{ channelDatasets.remote_background|json_encode|raw }},
+                    "borderColor": {{ channelDatasets.remote_border|json_encode|raw }},
+                    "borderWidth": 1
+                }]
+            },
+            "options": {
+                "maintainAspectRatio": false,
+                "scales": {
+                    "yAxes": [{
+                        "ticks": {
+                            "beginAtZero": true,
+                            "callback": function (value) {
+                                return value.toLocaleString("en-US", "latn", {
+                                    "style": "decimal",
+                                }) + " mBTC";
+                            }
+                        },
+                        "stacked": true
+                    }],
+                    "xAxes": [{
+                        "stacked": true
+                    }]
+                }
+            }
+        });
+    </script>
+{% endblock %}
