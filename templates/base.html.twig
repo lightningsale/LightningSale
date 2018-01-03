@@ -46,9 +46,23 @@
     </div>
     </nav>
 
+
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="container">
+                <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            </div>
+        {% endfor %}
+    {% endfor %}
     {% block body %}{% endblock %}
 
-
+    {% block modals %}{% endblock %}
     <script src="{{ asset('build/js/main.js') }}"></script>
     {% block javascripts %}{% endblock %}
     </body>

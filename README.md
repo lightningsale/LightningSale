@@ -53,6 +53,7 @@ Or use github.com/lightningsale/LightningSale and `docker-compose up`
 
 ## Pages / TODO:
  - [X] Login
+ - [ ] 2-Factor authentication
  - [ ] Customer details (whitelabel stuff
    - [ ] Node/Wallet details/Status
       - [ ] Channe funding

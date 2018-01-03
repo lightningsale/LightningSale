@@ -1,29 +1,30 @@
-{% extends 'base.html.twig' %}
+{% extends 'base.htwithdrawals
 
 {% block body %}
 
     <div class="container">
+
+    <div class="card">
+        <div class="card-header">Transactions</div>
         <table class="table" style="table-layout: fixed; width: 100%;">
             <thead class="table-dark">
-            <tr>
-                <th>Date</th>
-                <th>Amount</th>
-                <th>Status</th>
-                <th>Hashdock</th>
-                <th></th>
-            </tr>
-            </thead>
             <tbody>
-            {% for invoice in invoices|reverse %}
+            {% for transaction in transactions|reverse %}
                 <tr>
-                    <td>{{ invoice.creationDate|date("d.m.Y H:i") }}</td>
-                    <td>{{ (invoice.value  / 100000)|round(2) }} <small>mBTC</small></td>
-                    <td>{{ invoice.settled ? 'Paid' : 'Waiting' }}</td>
-                    <td style="display: inline-block;">{{ invoice.rHash }}</td>
-                    <td><a href="{{ path('invoice_details_index', {'rHash': invoice.rHash}) }}">Details</a> </td>
+                    <td>{{ transaction.timeStamp|date("d.m.Y H:i") }}</td>
+                    <td class="{{ transaction.amount > 0 ? 'text-success' : 'text-danger' }}">{{ transaction.amount|satoshiToLocal }} <small>mBTC</small></td>
+                    <td>
+                        {% if transaction.numConfirmations >= 6 %}Confirmed
+                        {% else %}Pending <small>{{ transaction.numConfirmations }} confirmations</small>
+                        {% endif %}
+                    </td>
+                    <td style="display: inline-block; word-break: break-all">
+                        <a target="_blank" href="{{ path('cashier_dashboard_explorer', {"txId": transaction.txHash}) }}">{{ transaction.txHash }}</a>
+                    </td>
                 </tr>
             {% endfor %}
             </tbody>
         </table>
+    </div>
     </div>
 {% endblock %}

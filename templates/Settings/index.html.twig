@@ -1,73 +1,75 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+
     <div class="container">
         <div class="row card-deck">
-                <div class="card">
-                    <div class="card-header">Channels</div>
-                    <div class="card-body">
-                        <canvas id="channel-chart"></canvas>
-                    </div>
-                    <div class="card-text">
-                        <a href="#" class="btn btn-link">Details</a>
-                        <a href="#" class="btn btn-link">New</a>
-                    </div>
+            <div class="card">
+                <div class="card-header">Channels</div>
+                <div class="card-body">
+                    <canvas id="channel-chart"></canvas>
                 </div>
-                <div class="card">
-                    <div class="card-header">Wallet</div>
-                    <table class="table card-body" style="table-layout: fixed; width: 100%;">
-                        <tbody>
-                        <tr>
-                            <td>Confirmed</td>
-                            <td style="text-align: right;">{{ wallet.confirmedBalance|satoshiToMilliBtc }}
-                                <small>mBTC</small>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Unconfirmed</td>
-                            <td style="text-align: right;">{{ wallet.unconfirmedBalance|satoshiToMilliBtc }}
-                                <small>mBTC</small>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>In Channels:</td>
-                            <td style="text-align: right;">{{ channelBalance|satoshiToMilliBtc }}
-                                <small>mBTC</small>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Total</td>
-                            <td style="text-align: right;">{{ (wallet.totalBalance + channelBalance)|satoshiToMilliBtc }}
-                                <small>mBTC</small>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                    <div class="card-text">
-                        <a href="#" class="btn btn-link">Widthdraw</a>
-                        <a href="#" class="btn btn-link">Deposit</a>
-                    </div>
+                <div class="card-text">
+                    <a href="#" class="btn btn-link">Details</a>
+                    <a href="#" class="btn btn-link">New</a>
                 </div>
+            </div>
+            <div class="card">
+                <div class="card-header">Wallet</div>
+                <table class="table card-body" style="table-layout: fixed; width: 100%;">
+                    <tbody>
+                    <tr>
+                        <td>Confirmed</td>
+                        <td style="text-align: right;">{{ wallet.confirmedBalance|satoshiToMilliBtc }}
+                            <small>mBTC</small>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Unconfirmed</td>
+                        <td style="text-align: right;">{{ wallet.unconfirmedBalance|satoshiToMilliBtc }}
+                            <small>mBTC</small>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>In Channels:</td>
+                        <td style="text-align: right;">{{ channelBalance|satoshiToMilliBtc }}
+                            <small>mBTC</small>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Total</td>
+                        <td style="text-align: right;">{{ (wallet.totalBalance + channelBalance)|satoshiToMilliBtc }}
+                            <small>mBTC</small>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="card-text">
+                    <a href="#withdraw_modal" data-toggle="modal" class="btn btn-link">Widthdraw</a>
+                    <a href="#deposit_modal" data-toggle="modal" class="btn btn-link">Deposit</a>
+                    <a href="{{ path('transactions_index') }}" class="btn btn-link">Transactions</a>
+                </div>
+            </div>
         </div>
 
         <hr>
 
-            <div class="card">
-                <div class="card-header">Invoices</div>
-                <table class="table" style="table-layout: fixed; width: 100%;">
-                    <tbody>
-                    {% for invoice in pendingInvoices %}
-                        <tr>
-                            <td>{{ invoice.creationDate|date("d.m.Y H:i") }}</td>
-                            <td>{{ (invoice.value  / 100000)|round(2) }}
-                                <small>mBTC</small>
-                            </td>
-                            <td>{{ invoice.memo }}</td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+        <div class="card">
+            <div class="card-header">Invoices</div>
+            <table class="table" style="table-layout: fixed; width: 100%;">
+                <tbody>
+                {% for invoice in pendingInvoices %}
+                    <tr>
+                        <td>{{ invoice.creationDate|date("d.m.Y H:i") }}</td>
+                        <td>{{ (invoice.value  / 100000)|round(2) }}
+                            <small>mBTC</small>
+                        </td>
+                        <td>{{ invoice.memo }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 {% endblock %}
 
@@ -116,4 +118,53 @@
             }
         });
     </script>
+{% endblock %}
+
+{% block modals %}
+    <div class="modal fade" id="deposit_modal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Deposit funds</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group">
+                        <input id="deposit_address" type="text" placeholder="Wallet Address" class="form-control" value="{{ newAddress }}">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-primary"
+                                    data-container="body"
+                                    data-toggle="popover"
+                                    data-placement="top"
+                                    data-content="Copied!"
+                                    onclick="document.getElementById('deposit_address').select(); document.execCommand('copy');">Copy</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-body text-center">
+                    <img class="img-fluid" src="{{ qrcode_path(newAddress) }}">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="withdraw_modal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Withdraw funds</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    {{ form(withdrawForm) }}
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

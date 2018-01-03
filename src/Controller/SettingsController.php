@@ -9,6 +9,7 @@
 namespace App\Controller;
 
 
+use App\Form\WithdrawFundsType;
 use App\Service\Twig\ConvertSatoshi;
 use LightningSale\LndRest\Model\ActiveChannel;
 use LightningSale\LndRest\Model\PendingChannelResponse;
@@ -18,6 +19,7 @@ use LightningSale\LndRest\Model\PendingChannelResponsePendingOpenChannel;
 use LightningSale\LndRest\Resource\LndClient;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -27,16 +29,26 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class SettingsController extends Controller
 {
+    private $lndClient;
+
+    public function __construct(LndClient $lndClient)
+    {
+        $this->lndClient = $lndClient;
+    }
+
+
     /**
      * @Route("/", name="index")
      */
-    public function indexAction(LndClient $lndClient): Response
+    public function indexAction(): Response
     {
-        $channels = $lndClient->listChannels();
-        $pendingChannels = $lndClient->pendingChannels();
-        $wallet = $lndClient->walletBalance();
-        $pendingInvoices = $lndClient->listInvoices(true);
+        $channels = $this->lndClient->listChannels();
+        $pendingChannels = $this->lndClient->pendingChannels();
+        $wallet = $this->lndClient->walletBalance();
+        $pendingInvoices = $this->lndClient->listInvoices(true);
         $channelDatasets = $this->orderChartData($channels, $pendingChannels);
+        $newWitnessAddress = $this->lndClient->newWitnessAddress();
+        $withdrawForm = $this->createForm(WithdrawFundsType::class, null, ['action' => $this->generateUrl("settings_withdraw")]);
 
         $balanceInChannels = array_reduce($channels, function(int $carry, ActiveChannel $channel) {return $carry + (int) $channel->getLocalBalance();}, 0);
 
@@ -46,8 +58,30 @@ class SettingsController extends Controller
             'wallet' => $wallet,
             'pendingInvoices' => $pendingInvoices,
             'channelBalance' => $balanceInChannels,
-            'channelDatasets' => $channelDatasets
+            'channelDatasets' => $channelDatasets,
+            'newAddress' => $newWitnessAddress,
+            'withdrawForm' => $withdrawForm->createView(),
         ]);
+    }
+
+    /**
+     * @Route("/withdraw_funds", name="withdraw")
+     */
+    public function withdrawAction(Request $request) {
+        $withdrawForm = $this->createForm(WithdrawFundsType::class);
+        $withdrawForm->handleRequest($request);
+
+        if ($withdrawForm->isSubmitted() && $withdrawForm->isValid()) {
+            $txid = $this->lndClient->sendCoins($withdrawForm->getData());
+            $this->addFlash("success", "Funds have been sent with transaction id: $txid");
+            $this->redirectToRoute("settings_index");
+        }
+
+        foreach ($withdrawForm->getErrors() as $error) {
+            $this->addFlash("warning", $error->getMessage());
+        }
+
+        return $this->redirectToRoute("settings_index");
     }
 
     /**

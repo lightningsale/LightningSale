@@ -4,6 +4,7 @@ parameters:
     lnd_cert: "%kernel.project_dir%/var/lnd/tls.cert"
     external_ip: "%env(EXTERNALIP)%"
     external_port: "%env(EXTERNALPORT)%"
+    chain_network: "%env(NETWORK)%"
 
 services:
     _defaults:

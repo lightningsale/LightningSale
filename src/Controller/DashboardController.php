@@ -16,8 +16,10 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -71,5 +73,19 @@ class DashboardController extends Controller
         $this->em->flush();
 
         return $this->redirectToRoute("cashier_dashboard_index");
+    }
+
+    /**
+     * @Route("/explorer/{txId}", name="explorer")
+     */
+    public function transactionAction(string $txId): Response
+    {
+        $network = $this->getParameter("chain_network");
+        switch ($network) {
+            case "testnet": return new RedirectResponse(sprintf("https://www.blocktrail.com/tBTC/tx/%s", $txId));
+            case "mainnet": return new RedirectResponse(sprintf("https://www.blocktrail.com/BTC/tx/%s", $txId));
+        }
+
+        throw new NotFoundHttpException("Chain network not found!");
     }
 }

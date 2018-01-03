@@ -21,7 +21,8 @@ Encore
     .autoProvideVariables({
         $: 'jquery',
         jQuery: 'jquery',
-        Chart: 'chart'
+        Chart: 'chart',
+        Popper: 'popper.js'
     })
 ;
 
