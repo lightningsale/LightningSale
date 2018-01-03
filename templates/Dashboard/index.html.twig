@@ -23,8 +23,13 @@
             {% for invoice in invoices %}
                 <tr>
                     <td>{{ invoice.creationDate|date("d.m.Y H:i") }}</td>
-                    <td>{{ (invoice.value  / 100000)|round(2) }} <small>mBTC</small></td>
-                    <td>{{ invoice.settled ? 'Paid' : 'Waiting' }}</td>
+                    <td>{{ invoice.value|satoshiToLocal }} <small>{{ localCurrency() }}</small></td>
+                    <td>
+                        {% if invoice.settled %}Paid
+                        {% elseif invoice.expired %}Expired <small>{{ invoice.expiry|date("d.m.Y H:i") }}</small>
+                        {% else %}Waiting
+                        {% endif %}
+                    </td>
                     <td>
                         <a href="#">{% if loop.first %}Hide{% else %}Show{% endif %}</a>
                         <a href="{{ path('invoice_details_index', {'rHash': invoice.rHash}) }}">Details</a>
@@ -44,6 +49,10 @@
                         <td></td>
                     </tr>
                 {% endif %}
+            {% else %}
+                <tr>
+                    <td colspan="4" class="text-center text-success"><h3>No unpaid / unexpired invoices found!</h3></td>
+                </tr>
             {% endfor %}
             </tbody>
         </table>

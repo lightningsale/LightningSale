@@ -50,9 +50,17 @@ class DashboardController extends Controller
         $form->add("save", SubmitType::class);
 
         $invoices = $this->lndClient->listInvoices(true);
+        $invoices = array_filter($invoices, function(\LightningSale\LndRest\Model\Invoice $invoice) {
+            return new \DateTime("-1 days") < $invoice->getExpiry();
+        });
+        usort($invoices, function (\LightningSale\LndRest\Model\Invoice $a, \LightningSale\LndRest\Model\Invoice $b) {
+            return $b->getCreationDate() <=> $a->getCreationDate();
+        });
+
         return $this->render("Dashboard/index.html.twig", [
             'invoices' => $invoices,
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'now' => new \DateTime(),
         ]);
     }
 

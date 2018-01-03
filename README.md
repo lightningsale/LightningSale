@@ -10,24 +10,26 @@ Or use github.com/lightningsale/LightningSale and `docker-compose up`
 - `lookupInvoice` doesnt work 
 
 ## Milestone 1
- 1. [ ] Set up users and authentication (Security!)
- 2. [X] Funding
- 3. [ ] Peers (Connecting doesn't work so good)
- 4. [ ] Channels (Missing open/close channel, missing support in LND REST)
- 5. [X] Transactions
- 6. [ ] Invoices
+ - [ ] Set up users and authentication (Security!)
+ - [ ] Configure (Local currency, invoice timeout)
+ - [X] Funding
+ - [ ] Peers (Connecting doesn't work so good)
+ - [ ] Channels (Missing open/close channel, missing support in LND REST)
+ - [X] Transactions
+ - [ ] Invoices
     - [X] Create invoice
     - [X] Pending invoices
     - [ ] Remove old unpaid invoices
     - [ ] Invoice details (missing support in LND REST)
 
 ## Milestone 2
- 1. [ ] Design / UX
- 2. [ ] Realtime information
- 2. [ ] Secure deployments / Auditing
- 3. [ ] Streamline deployments (collect all env variables in docker-compose.yml etc)
- 4. [ ] Backups and Recovery
- 5. [ ] Encrypted wallet
+ - [ ] Design / UX
+ - [ ] Local currency
+ - [ ] Realtime information
+ - [ ] Secure deployments / Auditing
+ - [ ] Streamline deployments (collect all env variables in docker-compose.yml etc)
+ - [ ] Backups and Recovery
+ - [ ] Encrypted wallet
  
 ## Milestone 3
  1. [ ] Email notifications
