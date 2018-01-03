@@ -18,7 +18,7 @@
             </button>
             <div class="collapse navbar-collapse navbarCollapse pull-right">
                 {% set path = app.request.attributes.get('_route') %}
-                <ul class="navbar-nav mr-auto">
+                <ul class="navbar-nav pull-right">
                     {% if app.user %}
                     <li class="nav-item {% if path=="cashier_dashboard_index" %}active{% endif %}">
                         <a href="{{ path('cashier_dashboard_index') }}" class="nav-link">
@@ -42,8 +42,13 @@
                     </li>
                 </ul>
                 {% endif %}
+            </div>
+            <div class="pull-right">
+                <ul class="navbar-nav">
+                    <li class="navbar-text">1 <i class="fa fa-btc"></i> = {{ 100000000|satoshiToLocal }} {{ localCurrency() }} </li>
+                </ul>
+            </div>
         </div>
-    </div>
     </nav>
 
 

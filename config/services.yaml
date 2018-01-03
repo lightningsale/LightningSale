@@ -4,6 +4,7 @@ parameters:
     lnd_cert: "%kernel.project_dir%/var/lnd/tls.cert"
     external_ip: "%env(EXTERNALIP)%"
     external_port: "%env(EXTERNALPORT)%"
+    redis_dsn: "redis://%env(REDIS_URL)%"
 
 services:
     _defaults:
@@ -24,3 +25,17 @@ services:
         factory: ['@App\Service\LightningServiceFactory','getLndClient']
     App\Service\LightningServiceFactory:
         arguments: ["%lnd_cert%", "%env(RPCPASS)%", "%env(RPCUSER)%", "%env(LND_HOST)%", "%env(LND_PORT)%"]
+
+    App\Service\ExchangeService:
+        arguments: [!tagged app.exchange]
+
+
+    Predis\Client:
+        factory: 'Symfony\Component\Cache\Adapter\AbstractAdapter::createConnection'
+        arguments: ["%redis_dsn%"]
+
+    Symfony\Component\Cache\Adapter\RedisAdapter:
+        arguments: ['@Predis\Client']
+
+    Symfony\Component\Cache\Adapter\AbstractAdapter:
+        alias: Symfony\Component\Cache\Adapter\RedisAdapter

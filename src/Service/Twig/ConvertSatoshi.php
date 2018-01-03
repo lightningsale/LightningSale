@@ -9,9 +9,21 @@
 namespace App\Service\Twig;
 
 
+use App\Exchange\CoinMarketCap;
+
 class ConvertSatoshi extends \Twig_Extension
 {
-    private const SATOSHI_IN_BTC = 100000;
+    private const SATOSHI_IN_BTC = 100000000;
+    private $coinMarketCap;
+
+    /**
+     * ConvertSatoshi constructor.
+     */
+    public function __construct(CoinMarketCap $coinMarketCap)
+    {
+        $this->coinMarketCap = $coinMarketCap;
+    }
+
 
     public function getFilters()
     {
@@ -30,15 +42,24 @@ class ConvertSatoshi extends \Twig_Extension
 
     public function satoshiToMilliBtc(string $satoshi, int $round = 2)
     {
-        return round((float) $satoshi / self::SATOSHI_IN_BTC, $round);
+        return round((float) $satoshi / self::SATOSHI_IN_BTC / 1000, $round);
     }
 
-    public function satoshiToLocal(string $satoshi, int $round = 2, string $currency = null) {
-        return $this->satoshiToMilliBtc($satoshi, $round);
+    public function satoshiToLocal(string $satoshi, int $round = 2, string $currency = "NOK") {
+        $price = $this->coinMarketCap->getBuyPrice($currency);
+        $price = (float) $satoshi / self::SATOSHI_IN_BTC * (float) $price;
+        return round($price, $round);
+    }
+
+    public function localToSatoshi(string $local, string $currency = "NOK")
+    {
+        $local = (float) $local;
+        $price = (float) $this->coinMarketCap->getBuyPrice($currency);
+        return round($local / $price * self::SATOSHI_IN_BTC, 0);
     }
 
     public function localCurrency()
     {
-        return "mBTC"; //TODO: Update this!
+        return "kr";
     }
 }

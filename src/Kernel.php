@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Exchange\Exchange;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -58,4 +59,12 @@ class Kernel extends BaseKernel
         }
         $routes->import($confDir.'/routes'.self::CONFIG_EXTS, '/', 'glob');
     }
+
+    protected function build(ContainerBuilder $container)
+    {
+        $container->registerForAutoconfiguration(Exchange::class)
+            ->addTag("app.exchange");
+    }
+
+
 }

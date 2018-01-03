@@ -10,6 +10,7 @@ namespace App\Controller;
 
 use App\Entity\Cashier;
 use App\Form\NewInvoiceType;
+use App\Service\Twig\ConvertSatoshi;
 use Doctrine\ORM\EntityManagerInterface;
 use LightningSale\LndRest\Resource\LndClient;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -68,13 +69,14 @@ class DashboardController extends Controller
      * @Route("/new_invoice", name="new_invoice")
      * @param Cashier $user
      */
-    public function createInvoiceAction(Request $request, UserInterface $user): Response
+    public function createInvoiceAction(Request $request, UserInterface $user, ConvertSatoshi $convertSatoshi): Response
     {
         $form = $this->createForm(NewInvoiceType::class);
         $form->handleRequest($request);
         $data=$form->getData();
 
         $amount = $data['amount'];
+        $amount = $convertSatoshi->localToSatoshi($amount);
         $description = $data['description'] ?? "";
         $user->createInvoice($this->lndClient, $amount, $description);
         $this->em->flush();

@@ -13,6 +13,7 @@ namespace App\Controller;
 use App\Form\Security\LoginType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Class LoginController
@@ -26,7 +27,10 @@ class LoginController extends Controller
      * @Route("/", name="merchant")
      * @Route("/login_check", name="check")
      */
-    public function merchantLoginAction() {
+    public function merchantLoginAction(UserInterface $user = null) {
+        if ($user)
+            return $this->redirectToRoute("cashier_dashboard_index");
+
 
         $form = $this->createForm(LoginType::class);
         return $this->render("Login/merchant.html.twig", [

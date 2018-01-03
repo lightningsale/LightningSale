@@ -40,6 +40,8 @@ services:
       - mysql:/var/lib/mysql
     environment:
       - MYSQL_ROOT_PASSWORD=abcd1234
+  redis:
+    image: redis
 volumes:
   lnd: ~
   mysql: ~

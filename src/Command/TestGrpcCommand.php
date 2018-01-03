@@ -9,6 +9,8 @@
 namespace App\Command;
 
 
+use App\Exchange\CoinMarketCap;
+use App\Service\ExchangeService;
 use GuzzleHttp\Client;
 use LightningSale\LndRest\Model\SendRequest;
 use LightningSale\LndRest\Resource\LndClient;
@@ -18,13 +20,19 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class TestGrpcCommand extends Command
 {
-    public function __construct()
+    private $exchangeService;
+
+    public function __construct(ExchangeService $exchangeService, CoinMarketCap $cap)
     {
         parent::__construct("app:test");
+        $this->exchangeService = $exchangeService;
+        $this->cap = $cap;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $output->writeln($this->cap->getBuyPrice("USD"));
+        die;
         //{"error":"connection error: desc = \"
         //  transport: authentication handshake failed: tls:
         // either ServerName or InsecureSkipVerify must be specified in the tls.Config\

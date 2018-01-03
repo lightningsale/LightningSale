@@ -53,7 +53,7 @@ class ChannelsController extends Controller
         $pendingChannels = $this->lndClient->pendingChannels();
         $channelDatasets = self::orderChartData($channels, $pendingChannels, $this->convertSatoshi);
 
-        return $this->render("Channels/index.html.twig", [
+        return $this->render("Channels/channels.html.twig", [
             'openChannels' => $channels,
             'pendingChannels' => $pendingChannels,
             'channelDatasets' => $channelDatasets,

@@ -20,26 +20,26 @@
                     <tbody>
                     <tr>
                         <td>Confirmed</td>
-                        <td style="text-align: right;">{{ wallet.confirmedBalance|satoshiToMilliBtc }}
-                            <small>mBTC</small>
+                        <td style="text-align: right;">{{ wallet.confirmedBalance|satoshiToLocal }}
+                            <small>{{ localCurrency() }}</small>
                         </td>
                     </tr>
                     <tr>
                         <td>Unconfirmed</td>
-                        <td style="text-align: right;">{{ wallet.unconfirmedBalance|satoshiToMilliBtc }}
-                            <small>mBTC</small>
+                        <td style="text-align: right;">{{ wallet.unconfirmedBalance|satoshiToLocal }}
+                            <small>{{ localCurrency() }}</small>
                         </td>
                     </tr>
                     <tr>
                         <td>In Channels:</td>
-                        <td style="text-align: right;">{{ channelBalance|satoshiToMilliBtc }}
-                            <small>mBTC</small>
+                        <td style="text-align: right;">{{ channelBalance|satoshiToLocal }}
+                            <small>{{ localCurrency() }}</small>
                         </td>
                     </tr>
                     <tr>
                         <td>Total</td>
                         <td style="text-align: right;">{{ (wallet.totalBalance + channelBalance)|satoshiToMilliBtc }}
-                            <small>mBTC</small>
+                            <small>{{ localCurrency() }}</small>
                         </td>
                     </tr>
                     </tbody>
@@ -62,7 +62,7 @@
                     <tr>
                         <td>{{ invoice.creationDate|date("d.m.Y H:i") }}</td>
                         <td>
-                            {{ invoice.value|satoshiToLocal }} <small>mBTC</small>
+                            {{ invoice.value|satoshiToLocal }} <small>{{ localCurrency() }}</small>
                         </td>
                         <td>{{ invoice.memo }}</td>
                     </tr>
@@ -106,7 +106,7 @@
                             "callback": function (value) {
                                 return value.toLocaleString("en-US", "latn", {
                                     "style": "decimal",
-                                }) + " mBTC";
+                                }) + " {{ localCurrency() }}";
                             }
                         },
                         "stacked": true
