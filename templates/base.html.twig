@@ -12,27 +12,34 @@
 
     <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
         <div class="container justify-content-between">
-            <a href="#" class="mx-auto navbar-brand">LightningSale</a>
+            <a href="{{ path('cashier_dashboard_index') }}" class="mx-auto navbar-brand">LightningSale</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse navbarCollapse pull-right">
+                {% set path = app.request.attributes.get('_route') %}
                 <ul class="navbar-nav mr-auto">
                     {% if app.user %}
-                    <li class="nav-item"><a href="{{ path('login_out') }}" class="nav-link">
-                            <i class="fa fa-sign-out"></i> Sign out</a>
-                    </li>
-                    <li class="nav-item">
+                    <li class="nav-item {% if path=="cashier_dashboard_index" %}active{% endif %}">
                         <a href="{{ path('cashier_dashboard_index') }}" class="nav-link">
                             <i class="fa fa-home"></i> Dashboard
                         </a>
                     </li>
-                    <li class="nav-item"><a href="{{ path('info_index') }}" class="nav-link"><i class="fa fa-info"></i> Info</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link"><i class="fa fa-user"></i> Profile</a></li>
                     {% if app.user is Merchant %}
-                        <li class="nav-item"><a href="{{ path('settings_index') }}" class="nav-link"><i class="fa fa-cog"></i> Settings</a></li>
+                        <li class="nav-item {% if path=="settings_wallet" %}active{% endif %}">
+                            <a href="{{ path('settings_wallet') }}" class="nav-link"><i class="fa fa-btc"></i> Wallet</a>
+                        </li>
+                        <li class="nav-item {% if path=="settings_config" %}active{% endif %}">
+                            <a href="{{ path('settings_config') }}" class="nav-link"><i class="fa fa-cog"></i> Config</a>
+                        </li>
                         <li class="nav-item"><a href="#" class="nav-link"><i class="fa fa-users"></i> Users</a></li>
                     {% endif %}
+
+                    <li class="nav-item {% if path=="info_index" %}active{% endif %}"><a href="{{ path('info_index') }}" class="nav-link"><i class="fa fa-info"></i> Info</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link"><i class="fa fa-user"></i> Profile</a></li>
+                    <li class="nav-item"><a href="{{ path('login_out') }}" class="nav-link">
+                            <i class="fa fa-sign-out"></i> Sign out</a>
+                    </li>
                 </ul>
                 {% endif %}
         </div>

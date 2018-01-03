@@ -62,17 +62,11 @@
     "doctrine/orm": {
         "version": "v2.5.14"
     },
-    "endroid/qrcode": {
-        "version": "3.1.0"
+    "endroid/qr-code": {
+        "version": "3.1.1"
     },
-    "endroid/qrcode-bundle": {
-        "version": "3.0",
-        "recipe": {
-            "repo": "github.com/symfony/recipes-contrib",
-            "branch": "master",
-            "version": "3.0",
-            "ref": "c7d3c39bcc544e84e6ed5249969e7227e7e63b14"
-        }
+    "endroid/qr-code-bundle": {
+        "version": "3.1.1"
     },
     "google/protobuf": {
         "version": "v3.5.0.1"

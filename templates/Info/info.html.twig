@@ -38,7 +38,7 @@
                 </table>
             </div>
             <div class="col-md-4">
-                <img style="width: 100%" src="{{ qrcode_path(info.identityPubkey ~ '@' ~ externalIp ~ ':' ~ externalPort) }}">
+                <img style="width: 100%" src="{{ qrcode_data_uri(info.identityPubkey ~ '@' ~ externalIp ~ ':' ~ externalPort) }}">
                 <span>{{ info.identityPubkey ~ '@' ~ externalIp ~ ':' ~ externalPort }}</span>
             </div>
         </div>

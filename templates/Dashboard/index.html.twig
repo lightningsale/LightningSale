@@ -39,7 +39,7 @@
                 {% if loop.first %}
                     <tr>
                         <td>
-                            <img src='{{ qrcode_path('lightning:' ~ invoice.paymentRequest, {'size': 150, 'margin': 0}) }}'
+                            <img src='{{ qrcode_data_uri('lightning:' ~ invoice.paymentRequest, {'size': 150, 'margin': 0}) }}'
                                  alt='LightningCode'>
                         </td>
                         <td style="word-break: break-all; display: inline-block;">

@@ -12,7 +12,6 @@ namespace App\Security;
 use App\Entity\User;
 use App\Form\Security\LoginType;
 use App\Repository\UserRepository;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,6 +24,7 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 
 class FormAuthenticator extends AbstractGuardAuthenticator
@@ -35,19 +35,22 @@ class FormAuthenticator extends AbstractGuardAuthenticator
     private $session;
     private $formBuilder;
     private $userRepo;
+    private $csrfTokenManager;
 
     public function __construct(
         EncoderFactoryInterface $encoderFactory,
         RouterInterface $router,
         SessionInterface $session,
         FormFactoryInterface $formBuilder,
-        UserRepository $userRepo
+        UserRepository $userRepo,
+        CsrfTokenManagerInterface $csrfTokenManager
     ){
         $this->encoderFactory = $encoderFactory;
         $this->router = $router;
         $this->session = $session;
         $this->formBuilder = $formBuilder;
         $this->userRepo = $userRepo;
+        $this->csrfTokenManager = $csrfTokenManager;
     }
 
 

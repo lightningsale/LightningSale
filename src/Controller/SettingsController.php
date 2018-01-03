@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 
+use App\Form\ConfigType;
 use App\Form\NewChannelType;
 use App\Form\WithdrawFundsType;
 use App\Service\Twig\ConvertSatoshi;
@@ -36,11 +37,20 @@ class SettingsController extends Controller
         $this->lndClient = $lndClient;
     }
 
+    /**
+     * @Route("/", name="config")
+     */
+    public function configAction(): Response
+    {
+        return $this->render("Settings/config.html.twig", [
+            'form' => $this->createForm(ConfigType::class)->createView()
+        ]);
+    }
 
     /**
-     * @Route("/", name="index")
+     * @Route("/wallet", name="wallet")
      */
-    public function indexAction(ConvertSatoshi $convertSatoshi): Response
+    public function walletAction(ConvertSatoshi $convertSatoshi): Response
     {
         $channels = $this->lndClient->listChannels();
         $pendingChannels = $this->lndClient->pendingChannels();
@@ -53,7 +63,7 @@ class SettingsController extends Controller
 
         $balanceInChannels = array_reduce($channels, function(int $carry, ActiveChannel $channel) {return $carry + (int) $channel->getLocalBalance();}, 0);
 
-        return $this->render("Settings/index.html.twig", [
+        return $this->render("Settings/wallet.html.twig", [
             'channels'=> $channels,
             'pendingChannels'=> $pendingChannels,
             'wallet' => $wallet,

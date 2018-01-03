@@ -31,6 +31,6 @@ class InfoController extends Controller
         $externalIp = $this->getParameter("external_ip");
         $externalPort = $this->getParameter("external_port");
         $info = $lndClient->getInfo();
-        return $this->render("Info/index.html.twig", ['info' => $info, 'externalIp' => $externalIp, 'externalPort' => $externalPort]);
+        return $this->render("Info/info.html.twig", ['info' => $info, 'externalIp' => $externalIp, 'externalPort' => $externalPort]);
     }
 }
