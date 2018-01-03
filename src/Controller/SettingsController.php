@@ -14,7 +14,6 @@ use App\Form\NewChannelType;
 use App\Form\WithdrawFundsType;
 use App\Service\Twig\ConvertSatoshi;
 use LightningSale\LndRest\Model\ActiveChannel;
-use LightningSale\LndRest\Model\Peer;
 use LightningSale\LndRest\Resource\LndClient;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -50,7 +49,7 @@ class SettingsController extends Controller
         $pendingInvoices = $this->lndClient->listInvoices(true);
         $newWitnessAddress = $this->lndClient->newWitnessAddress();
         $withdrawForm = $this->createForm(WithdrawFundsType::class, null, ['action' => $this->generateUrl("settings_withdraw")]);
-        $newChannelForm = $this->createForm(NewChannelType::class, null, ['action' => $this->generateUrl("settings_new_channel")]);
+        $newChannelForm = $this->createForm(NewChannelType::class, null, ['action' => $this->generateUrl("channels_new_channel")]);
 
         $balanceInChannels = array_reduce($channels, function(int $carry, ActiveChannel $channel) {return $carry + (int) $channel->getLocalBalance();}, 0);
 
@@ -86,55 +85,4 @@ class SettingsController extends Controller
 
         return $this->redirectToRoute("settings_index");
     }
-
-    /**
-     * @Route("/new_channel", name="new_channel")
-     */
-    public function newChannelAction(Request $request) {
-        $form = $this->createForm(NewChannelType::class);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $data = $form->getData();
-            $pubKey = $data['pubkey'];
-            $host = $data['host'];
-            $peer = $this->findPeer($pubKey);
-            if (!$peer)
-                $this->lndClient->connectPeer($pubKey, $host, true);
-
-            $timeout = 60;
-            while ($timeout>0 && !$peer){
-                $peer = $this->findPeer($pubKey);
-                if (!$peer)
-                    sleep(1);
-            }
-            if (!$peer) {
-                $this->addFlash("warning", "Can't connect to peer!");
-                return $this->redirectToRoute("settings_index");
-            }
-
-            $txid = $this->lndClient->openChannelSync($pubKey, $data['amount']);
-
-            $this->addFlash("success", "New channel opened (txid: $txid)");
-            $this->redirectToRoute("settings_index");
-        }
-
-        foreach ($form->getErrors() as $error) {
-            $this->addFlash("warning", $error->getMessage());
-        }
-
-        return $this->redirectToRoute("settings_index");
-    }
-
-    private function findPeer($pubKey): ?Peer
-    {
-        $peers = $this->lndClient->listPeers();
-        dump($peers);
-        foreach ($peers as $p)
-            if ($p->getPubKey() === $pubKey)
-                return $p;
-
-        return null;
-    }
-
 }

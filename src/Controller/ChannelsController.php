@@ -10,8 +10,10 @@ declare(strict_types=1);
 namespace App\Controller;
 
 
+use App\Form\NewChannelType;
 use App\Service\Twig\ConvertSatoshi;
 use LightningSale\LndRest\Model\ActiveChannel;
+use LightningSale\LndRest\Model\Peer;
 use LightningSale\LndRest\Model\PendingChannelResponse;
 use LightningSale\LndRest\Model\PendingChannelResponseClosedChannel;
 use LightningSale\LndRest\Model\PendingChannelResponseForceClosedChannel;
@@ -20,6 +22,7 @@ use LightningSale\LndRest\Resource\LndClient;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -66,6 +69,46 @@ class ChannelsController extends Controller
 
         $this->addFlash("success", "Channel closed");
         return $this->redirectToRoute("channels_index");
+    }
+
+
+    /**
+     * @Route("/new_channel", name="new_channel")
+     */
+    public function newChannelAction(Request $request) {
+        $form = $this->createForm(NewChannelType::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $pubKey = $data['pubkey'];
+            $host = $data['host'];
+            $peer = $this->findPeer($pubKey);
+            if (!$peer)
+                $this->lndClient->connectPeer($pubKey, $host, true);
+
+            $timeout = 60;
+            while ($timeout>0 && !$peer){
+                $peer = $this->findPeer($pubKey);
+                if (!$peer)
+                    sleep(1);
+            }
+            if (!$peer) {
+                $this->addFlash("warning", "Can't connect to peer!");
+                return $this->redirectToRoute("settings_index");
+            }
+
+            $txid = $this->lndClient->openChannelSync($pubKey, (string) $data['amount']);
+
+            $this->addFlash("success", "New channel opened (txid: $txid)");
+            $this->redirectToRoute("settings_index");
+        }
+
+        foreach ($form->getErrors() as $error) {
+            $this->addFlash("warning", $error->getMessage());
+        }
+
+        return $this->redirectToRoute("settings_index");
     }
 
     /**
@@ -126,10 +169,10 @@ class ChannelsController extends Controller
                     return "rgba(153, 102, 255, 0.2)";
                 }, $pendingChannels->getPendingOpenChannels()),
                 array_map(function (PendingChannelResponseClosedChannel $pc) {
-                    return "rgba(255, 205, 86, 0.2)";
+                    return "rgba(153, 102, 255, 0.2)";
                 }, $pendingChannels->getPendingClosingChannels()),
                 array_map(function (PendingChannelResponseForceClosedChannel $pf) {
-                    return "rgba(201, 203, 207, 0.2)";
+                    return "rgba(153, 102, 255, 0.2)";
                 }, $pendingChannels->getPendingForceClosingChannels())
             ),
             'local_border' => array_merge(
@@ -140,10 +183,10 @@ class ChannelsController extends Controller
                     return "rgb(153, 102, 255)";
                 }, $pendingChannels->getPendingOpenChannels()),
                 array_map(function (PendingChannelResponseClosedChannel $pc) {
-                    return "rgb(255, 205, 86)";
+                    return "rgb(153, 102, 255)";
                 }, $pendingChannels->getPendingClosingChannels()),
                 array_map(function (PendingChannelResponseForceClosedChannel $pf) {
-                    return "rgb(201, 203, 207)";
+                    return "rgb(153, 102, 255)";
                 }, $pendingChannels->getPendingForceClosingChannels())
             ),
             'remote_background' => array_merge(
@@ -154,10 +197,10 @@ class ChannelsController extends Controller
                     return "rgba(153, 102, 255, 0.2)";
                 }, $pendingChannels->getPendingOpenChannels()),
                 array_map(function (PendingChannelResponseClosedChannel $pc) {
-                    return "rgba(75, 192, 192, 0.2)";
+                    return "rgba(153, 102, 255, 0.2)";
                 }, $pendingChannels->getPendingClosingChannels()),
                 array_map(function (PendingChannelResponseForceClosedChannel $pf) {
-                    return "rgba(201, 203, 207, 0.2)";
+                    return "rgba(153, 102, 255, 0.2)";
                 }, $pendingChannels->getPendingForceClosingChannels())
             ),
             'remote_border' => array_merge(
@@ -168,13 +211,23 @@ class ChannelsController extends Controller
                     return "rgb(153, 102, 255)";
                 }, $pendingChannels->getPendingOpenChannels()),
                 array_map(function (PendingChannelResponseClosedChannel $pc) {
-                    return "rgb(201, 203, 207)";
+                    return "rgb(153, 102, 255)";
                 }, $pendingChannels->getPendingClosingChannels()),
                 array_map(function (PendingChannelResponseForceClosedChannel $pf) {
-                    return "rgb(75, 192, 192)";
+                    return "rgb(153, 102, 255)";
                 }, $pendingChannels->getPendingForceClosingChannels())
             )
         ];
     }
 
+    private function findPeer($pubKey): ?Peer
+    {
+        $peers = $this->lndClient->listPeers();
+        dump($peers);
+        foreach ($peers as $p)
+            if ($p->getPubKey() === $pubKey)
+                return $p;
+
+        return null;
+    }
 }
