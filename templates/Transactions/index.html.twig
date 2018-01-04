@@ -12,7 +12,7 @@
             {% for transaction in transactions|reverse %}
                 <tr>
                     <td>{{ transaction.timeStamp|date("d.m.Y H:i") }}</td>
-                    <td class="{{ transaction.amount > 0 ? 'text-success' : 'text-danger' }}">{{ transaction.amount|satoshiToLocal }} <small>mBTC</small></td>
+                    <td class="{{ transaction.amount > 0 ? 'text-success' : 'text-danger' }}">{{ transaction.amount|formatSatoshi }} <small>mBTC</small></td>
                     <td>
                         {% if transaction.numConfirmations >= 6 %}Confirmed
                         {% else %}Pending <small>{{ transaction.numConfirmations }} confirmations</small>

@@ -9,7 +9,8 @@ services:
       - lnd:/root/.lnd
     ports:
       - 9736:9736
-    expose: ["10009", "8080"]
+      - 127.0.0.1:10009:10009
+    expose: ["8080"]
     entrypoint: ["./start-lnd.sh"]
     hostname: lnd
     command:

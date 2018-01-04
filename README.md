@@ -21,10 +21,11 @@ Or use github.com/lightningsale/LightningSale and `docker-compose up`
     - [X] Pending invoices
     - [ ] Remove old unpaid invoices
     - [ ] Invoice details (missing support in LND REST)
+ - [ ] Status, LND starting up (wait for sync), Wallet is encrypted, ask for decryption key etc
 
 ## Milestone 2
  - [ ] Design / UX
- - [ ] Local currency
+ - [X] Local currency
  - [ ] Realtime information
  - [ ] Secure deployments / Auditing
  - [ ] Streamline deployments (collect all env variables in docker-compose.yml etc)
@@ -43,7 +44,7 @@ Or use github.com/lightningsale/LightningSale and `docker-compose up`
  - docker-compose exec pos php bin/console doctrine:schema:update --force
  - docker-compose exec pos php bin/console app:create:user <-- Create first user
 
-## LightningShop TODO:
+## LightningSale TODO:
  - [ ] Copywriting
  - [ ] Design/Style
  - [ ] Figure out how to copy required certificates from LND to POS

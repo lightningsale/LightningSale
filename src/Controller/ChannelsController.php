@@ -11,7 +11,7 @@ namespace App\Controller;
 
 
 use App\Form\NewChannelType;
-use App\Service\Twig\ConvertSatoshi;
+use App\Service\Twig\SatoshiConverter;
 use LightningSale\LndRest\Model\ActiveChannel;
 use LightningSale\LndRest\Model\Peer;
 use LightningSale\LndRest\Model\PendingChannelResponse;
@@ -37,7 +37,7 @@ class ChannelsController extends Controller
     private $convertSatoshi;
     private $lndClient;
 
-    public function __construct(ConvertSatoshi $convertSatoshi, LndClient $lndClient)
+    public function __construct(SatoshiConverter $convertSatoshi, LndClient $lndClient)
     {
         $this->convertSatoshi = $convertSatoshi;
         $this->lndClient = $lndClient;
@@ -116,35 +116,35 @@ class ChannelsController extends Controller
      * @param PendingChannelResponse $pendingChannels
      * @return array
      */
-    public static function orderChartData(array $channels, PendingChannelResponse $pendingChannels, ConvertSatoshi $convertSatoshi): array
+    public static function orderChartData(array $channels, PendingChannelResponse $pendingChannels, SatoshiConverter $convertSatoshi): array
     {
         return [
             'local' => array_merge(
                 array_map(function (ActiveChannel $ac) use($convertSatoshi) {
-                    return $convertSatoshi->satoshiToMilliBtc($ac->getLocalBalance());
+                    return $convertSatoshi->satoshiToLocal($ac->getLocalBalance());
                 }, $channels),
                 array_map(function (PendingChannelResponsePendingOpenChannel $po) use($convertSatoshi) {
-                    return $convertSatoshi->satoshiToMilliBtc($po->getChannel()->getLocalBalance());
+                    return $convertSatoshi->satoshiToLocal($po->getChannel()->getLocalBalance());
                 }, $pendingChannels->getPendingOpenChannels()),
                 array_map(function (PendingChannelResponseClosedChannel $pc) use($convertSatoshi) {
-                    return $convertSatoshi->satoshiToMilliBtc($pc->getChannel()->getLocalBalance());
+                    return $convertSatoshi->satoshiToLocal($pc->getChannel()->getLocalBalance());
                 }, $pendingChannels->getPendingClosingChannels()),
                 array_map(function (PendingChannelResponseForceClosedChannel $pf) use($convertSatoshi) {
-                    return $convertSatoshi->satoshiToMilliBtc($pf->getChannel()->getLocalBalance());
+                    return $convertSatoshi->satoshiToLocal($pf->getChannel()->getLocalBalance());
                 }, $pendingChannels->getPendingForceClosingChannels())
             ),
             'remote' => array_merge(
                 array_map(function (ActiveChannel $ac) use($convertSatoshi) {
-                    return $convertSatoshi->satoshiToMilliBtc($ac->getRemoteBalance());
+                    return $convertSatoshi->satoshiToLocal($ac->getRemoteBalance());
                 }, $channels),
                 array_map(function (PendingChannelResponsePendingOpenChannel $po) use($convertSatoshi) {
-                    return $convertSatoshi->satoshiToMilliBtc($po->getChannel()->getRemoteBalance());
+                    return $convertSatoshi->satoshiToLocal($po->getChannel()->getRemoteBalance());
                 }, $pendingChannels->getPendingOpenChannels()),
                 array_map(function (PendingChannelResponseClosedChannel $pc) use($convertSatoshi) {
-                    return $convertSatoshi->satoshiToMilliBtc($pc->getChannel()->getRemoteBalance());
+                    return $convertSatoshi->satoshiToLocal($pc->getChannel()->getRemoteBalance());
                 }, $pendingChannels->getPendingClosingChannels()),
                 array_map(function (PendingChannelResponseForceClosedChannel $pf) use($convertSatoshi) {
-                    return $convertSatoshi->satoshiToMilliBtc($pf->getChannel()->getRemoteBalance());
+                    return $convertSatoshi->satoshiToLocal($pf->getChannel()->getRemoteBalance());
                 }, $pendingChannels->getPendingForceClosingChannels())
             ),
             'labels' => array_merge(

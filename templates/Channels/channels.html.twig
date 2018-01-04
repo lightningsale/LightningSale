@@ -21,9 +21,9 @@
                 <tr>
                     <th>Status</th>
                     <th>Close fee</th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
+                    <th class="text-right"><small>Local</small></th>
+                    <th class="text-right"><small>Remote</small></th>
+                    <th class="text-right"><small>Total</small></th>
                     <th></th>
                 </tr>
                 </thead>
@@ -31,10 +31,10 @@
                 {% for channel in openChannels %}
                     <tr>
                         <td><span class="text-success">Open</span> <small class="{{ channel.active? 'text-success' : 'text-warning' }}">({{ channel.active ? 'active' : 'inactive' }})</small></td>
-                        <td>{{ channel.commitFee|satoshiToLocal }} <small>{{ localCurrency() }}</small></td>
-                        <td><small>Local: {{ channel.localBalance|satoshiToLocal }} {{ localCurrency() }}</small></td>
-                        <td><small>Remote {{ channel.remoteBalance|satoshiToLocal }} {{ localCurrency() }}</small></td>
-                        <td class="text-right"><small>Total: {{ (channel.capacity - channel.commitFee) |satoshiToLocal }} {{ localCurrency() }}</small></td>
+                        <td>{{ channel.commitFee|formatSatoshi }}</td>
+                        <td class="text-right"><small>{{ channel.localBalance|formatSatoshi }}</small></td>
+                        <td class="text-right"><small>{{ channel.remoteBalance|formatSatoshi }}</small></td>
+                        <td class="text-right"><small>{{ (channel.capacity - channel.commitFee) |formatSatoshi }}</small></td>
                         <td class="text-right">
                             <a href="{{ path('channels_close', {'id': channel.fundingTxId, 'index': channel.outputIndex, 'force': channel.active ? '0' : '1'}) }}">{{ channel.active ? 'Close' : 'Force-Close' }}</a>
                             <a target="_blank" href="{{ path('cashier_dashboard_explorer', {'txId': channel.fundingTxId}) }}">Info</a>
@@ -55,10 +55,10 @@
                 {% for channel in pendingChannels.pendingOpenChannels %}
                     <tr>
                         <td><span class="text-warning">Pending <small>({{ channel.blocksTillOpen }} blocks until open)</small></span></td>
-                        <td>{{ channel.commitFee|satoshiToLocal }} <small>{{ localCurrency() }}</small></td>
-                        <td><small>Local: {{ channel.channel.localBalance|satoshiToLocal }} {{ localCurrency() }}</small></td>
-                        <td><small>Remote {{ channel.channel.remoteBalance|satoshiToLocal }} {{ localCurrency() }}</small></td>
-                        <td class="text-right"><small>Total: {{ (channel.channel.capacity - channel.commitFee) |satoshiToLocal }} {{ localCurrency() }}</small></td>
+                        <td>{{ channel.commitFee|satoshiToLocal }}</td>
+                        <td class="text-right"><small>{{ channel.channel.localBalance|formatSatoshi }}</small></td>
+                        <td class="text-right"><small>{{ channel.channel.remoteBalance|formatSatoshi }}</small></td>
+                        <td class="text-right"><small>{{ (channel.channel.capacity - channel.commitFee) |formatSatoshi }}</small></td>
                         <td class="text-right"><a target="_blank" href="{{ path('cashier_dashboard_explorer', {'txId': channel.channel.fundingTxId}) }}">Info</a> </td>
                     </tr>
                     <tr>
@@ -77,9 +77,9 @@
                     <tr>
                         <td><span class="text-warning">Pending Closing</span></td>
                         <td></td>
-                        <td><small>Local: {{ channel.channel.localBalance|satoshiToLocal }} {{ localCurrency() }}</small></td>
-                        <td><small>Remote {{ channel.channel.remoteBalance|satoshiToLocal }} {{ localCurrency() }}</small></td>
-                        <td class="text-right"><small>Total: {{ (channel.channel.capacity) |satoshiToLocal }} {{ localCurrency() }}</small></td>
+                        <td class="text-right"><small>{{ channel.channel.localBalance|formatSatoshi }}</small></td>
+                        <td class="text-right"><small>{{ channel.channel.remoteBalance|formatSatoshi }}</small></td>
+                        <td class="text-right"><small>Total: {{ (channel.channel.capacity) |formatSatoshi }}</small></td>
                         <td class="text-right"><a target="_blank" href="{{ path('cashier_dashboard_explorer', {'txId': channel.closingTxid}) }}">Info</a> </td>
                     </tr>
                     <tr>
@@ -98,9 +98,9 @@
                     <tr>
                         <td><span class="text-warning">Force Closing</span></td>
                         <td></td>
-                        <td><small>Local: {{ channel.channel.localBalance|satoshiToLocal }} {{ localCurrency() }}</small></td>
-                        <td><small>Remote {{ channel.channel.remoteBalance|satoshiToLocal }} {{ localCurrency() }}</small></td>
-                        <td class="text-right"><small>Total: {{ (channel.channel.capacity) |satoshiToLocal }} {{ localCurrency() }}</small></td>
+                        <td class="text-right"><small>{{ channel.channel.localBalance|formatSatoshi }}</small></td>
+                        <td class="text-right"><small>{{ channel.channel.remoteBalance|formatSatoshi }}</small></td>
+                        <td class="text-right"><small>{{ (channel.channel.capacity) |formatSatoshi }}</small></td>
                         <td class="text-right"><a target="_blank" href="{{ path('cashier_dashboard_explorer', {'txId': channel.closingTxid}) }}">Info</a> </td>
                     </tr>
                     <tr>
@@ -161,7 +161,7 @@
                                     callback: function (value) {
                                         return value.toLocaleString("en-US", "latn", {
                                             style: "decimal",
-                                        }) + " {{ localCurrency() }}";
+                                        }) + "";
                                     }
                                 },
                                 stacked: true,
@@ -229,7 +229,7 @@
                             "callback": function (value) {
                                 return value.toLocaleString("en-US", "latn", {
                                     "style": "decimal",
-                                }) + " {{ localCurrency() }}";
+                                });
                             }
                         },
                         "stacked": true

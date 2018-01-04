@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Created by PhpStorm.
  * User: richard
@@ -10,19 +11,15 @@ namespace App\Exchange;
 
 
 use GuzzleHttp\Client;
-use Symfony\Component\Cache\Adapter\AbstractAdapter;
-use Symfony\Component\Cache\CacheItem;
+use Symfony\Component\Cache\Simple\AbstractCache;
 
 class BitmyntNo implements Exchange
 {
-    /** @var CacheItem */
-    private $item;
     private $cache;
+    private $symbols = [];
 
-    public function __construct(AbstractAdapter $cache)
+    public function __construct(AbstractCache $cache)
     {
-        $this->item = $cache->getItem("bitmynt.no");
-        $this->item->expiresAfter(120);
         $this->cache = $cache;
     }
 
@@ -39,42 +36,42 @@ class BitmyntNo implements Exchange
     public function getBuyPrice(string $symbol = "BTCNOK"): string {
         $this->assertSymbol($symbol);
 
-        if (!$this->item->isHit())
-            $this->updatePrices();
+        if (!$this->cache->has("bitmynt.$symbol")){
+            $prices = $this->getPrice($symbol);
+            $this->cache->set("bitmynt.$symbol", $prices, 200);
+            return $prices['buy'];
+        }
 
-        $prices = $this->item->get();
-        return $prices[$symbol]["buy"];
+        return $this->cache->get("bitmynt.$symbol")["buy"];
     }
 
     public function getSellPrice(string $symbol = "BTCNOK"): string {
         $this->assertSymbol($symbol);
 
-        if (!$this->item->isHit())
-            $this->updatePrices();
+        if (!$this->cache->has("bitmynt.$symbol")){
+            $prices = $this->getPrice($symbol);
+            $this->cache->set("bitmynt.$symbol", $prices, 200);
+            return $prices['sell'];
+        }
 
-        $prices = $this->item->get();
-        return $prices[$symbol]["sell"];
+        return $this->cache->get("bitmynt.$symbol")["sell"];
     }
 
-    private function updatePrices(): void
+    private function getPrice($symbol): array
     {
+        if (isset($this->symbols[$symbol]))
+            return $this->symbols[$symbol];
+
         $client = new Client();
         $response = $client->get("http://bitmynt.no/ticker.pl");
         $body = $response->getBody()->getContents();
 
         $prices = \GuzzleHttp\json_decode($body, true);
-        $this->item->set([
-            "BTCNOK" => [
-                'buy' => $prices['nok']['buy'],
-                'sell' => $prices['nok']['sell'],
-            ],
-            'BTCEUR' => [
-                'buy' => $prices['eur']['buy'],
-                'sell' => $prices['eur']['sell'],
-            ]
-        ]);
-
-        $this->cache->save($this->item);
+        switch ($symbol) {
+            case "NOK": return $this->symbols[$symbol] = $prices['nok'];
+            case "EUR": return $this->symbols[$symbol] = $prices['eur'];
+            default: throw new \InvalidArgumentException("$symbol not supported by Bitmynt.no!");
+        }
     }
 
     private function assertSymbol(string $symbol): void

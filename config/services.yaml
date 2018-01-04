@@ -34,8 +34,8 @@ services:
         factory: 'Symfony\Component\Cache\Adapter\AbstractAdapter::createConnection'
         arguments: ["%redis_dsn%"]
 
-    Symfony\Component\Cache\Adapter\RedisAdapter:
+    Symfony\Component\Cache\Simple\RedisCache:
         arguments: ['@Predis\Client']
 
-    Symfony\Component\Cache\Adapter\AbstractAdapter:
-        alias: Symfony\Component\Cache\Adapter\RedisAdapter
+    Symfony\Component\Cache\Simple\AbstractCache:
+        alias: Symfony\Component\Cache\Simple\RedisCache

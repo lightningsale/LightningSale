@@ -17,7 +17,7 @@ use LightningSale\LndRest\Resource\LndClient;
 /**
  * Class Transaction
  * @package App\Entity
- * @ORM\Entity(repositoryClass="InvoiceRepository")
+ * @ORM\Entity
  * @ORM\Table(name="invoices")
  */
 class Invoice

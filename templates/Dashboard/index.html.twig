@@ -23,7 +23,7 @@
             {% for invoice in invoices %}
                 <tr>
                     <td>{{ invoice.creationDate|date("d.m.Y H:i") }}</td>
-                    <td>{{ invoice.value|satoshiToLocal }} <small>{{ localCurrency() }}</small></td>
+                    <td>{{ invoice.value|formatSatoshi }}</td>
                     <td>
                         {% if invoice.settled %}Paid
                         {% elseif invoice.expired %}Expired <small>{{ invoice.expiry|date("d.m.Y H:i") }}</small>

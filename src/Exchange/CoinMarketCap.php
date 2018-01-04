@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Created by PhpStorm.
  * User: richard
@@ -10,20 +11,15 @@ namespace App\Exchange;
 
 
 use GuzzleHttp\Client;
-use Symfony\Component\Cache\Adapter\AbstractAdapter;
-use Symfony\Component\Cache\CacheItem;
+use Symfony\Component\Cache\Simple\AbstractCache;
 
 class CoinMarketCap implements Exchange
 {
-
-    /** @var CacheItem */
-    private $item;
     private $cache;
+    private $symbols = [];
 
-    public function __construct(AbstractAdapter $cache)
+    public function __construct(AbstractCache $cache)
     {
-        $this->item = $cache->getItem("coinmarketcap");
-        $this->item->expiresAfter(300);
         $this->cache = $cache;
     }
 
@@ -42,36 +38,32 @@ class CoinMarketCap implements Exchange
 
     public function getBuyPrice(string $symbol = "USD"): string
     {
-        $price = $this->item->get();
-        $key = "price_" . mb_strtolower($symbol);
-        if (!$this->item->isHit() || !isset($price[$key]))
-            $this->updatePrice($symbol);
+        if (!$this->cache->has("coinmarketcap.$symbol")) {
+            $price = $this->updatePrice($symbol);
+            $this->cache->set("coinmarketcap.$symbol", $price,300);
+            return $price;
+        }
 
-
-        $price = $this->item->get();
-        return $price[$key];
+        return (string) $this->cache->get("coinmarketcap.$symbol");
     }
 
     public function getSellPrice(string $symbol = "USD"): string
     {
-        $price = $this->cache->getItem("coinmarketcap")->get();
-        $key = "price_" . mb_strtolower($symbol);
-        if (!$this->item->isHit() || !isset($price[$key]))
-            $this->updatePrice($symbol);
-
-
-        $price = $this->item->get();
-        return $price[$key];
+        return $this->getBuyPrice($symbol);
     }
 
-    private function updatePrice(string $symbol): void
+    private function updatePrice(string $symbol): string
     {
+        if (isset($this->symbols[$symbol]))
+            return $this->symbols[$symbol];
+
         $client = new Client();
         $response = $client->get("https://api.coinmarketcap.com/v1/ticker/bitcoin/?convert=$symbol");
         $body = $response->getBody()->getContents();
         $prices = \GuzzleHttp\json_decode($body, true);
         $price = array_shift($prices);
-        $this->item->set($price);
-        $this->cache->save($this->item);
+        $key = "price_" . mb_strtolower($symbol);
+        $this->symbols[$symbol] = $price[$key];
+        return $price[$key];
     }
 }

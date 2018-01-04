@@ -10,10 +10,13 @@ declare(strict_types=1);
 namespace App\Controller;
 
 
+use App\Form\ConfigDTO;
 use App\Form\ConfigType;
 use App\Form\NewChannelType;
 use App\Form\WithdrawFundsType;
-use App\Service\Twig\ConvertSatoshi;
+use App\Repository\ConfigRepository;
+use App\Service\Twig\SatoshiConverter;
+use Doctrine\ORM\EntityManagerInterface;
 use LightningSale\LndRest\Model\ActiveChannel;
 use LightningSale\LndRest\Resource\LndClient;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -40,17 +43,31 @@ class SettingsController extends Controller
     /**
      * @Route("/", name="config")
      */
-    public function configAction(): Response
+    public function configAction(Request $request, ConfigRepository $configRepo, EntityManagerInterface $em): Response
     {
+        $form = $this->createForm(ConfigType::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var ConfigDTO $configDto */
+            $configDto = $form->getData();
+            $newValue = $configDto->currency;
+            $configRepo->getConfig(ConfigRepository::CURRENCY)->updateValue($newValue);
+            $configRepo->getConfig(ConfigRepository::LOCALE)->updateValue($configDto->locale);
+            $configRepo->getConfig(ConfigRepository::INVOICE_TIMEOUT)->updateValue($configDto->invoice_timeout);
+
+            $em->flush();
+        }
+
         return $this->render("Settings/config.html.twig", [
-            'form' => $this->createForm(ConfigType::class)->createView()
+            'form' => $form->createView()
         ]);
     }
 
     /**
      * @Route("/wallet", name="wallet")
      */
-    public function walletAction(ConvertSatoshi $convertSatoshi): Response
+    public function walletAction(SatoshiConverter $convertSatoshi): Response
     {
         $channels = $this->lndClient->listChannels();
         $pendingChannels = $this->lndClient->pendingChannels();

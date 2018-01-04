@@ -10,7 +10,8 @@ namespace App\Controller;
 
 use App\Entity\Cashier;
 use App\Form\NewInvoiceType;
-use App\Service\Twig\ConvertSatoshi;
+use App\Repository\ConfigRepository;
+use App\Service\Twig\SatoshiConverter;
 use Doctrine\ORM\EntityManagerInterface;
 use LightningSale\LndRest\Resource\LndClient;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -69,7 +70,7 @@ class DashboardController extends Controller
      * @Route("/new_invoice", name="new_invoice")
      * @param Cashier $user
      */
-    public function createInvoiceAction(Request $request, UserInterface $user, ConvertSatoshi $convertSatoshi): Response
+    public function createInvoiceAction(Request $request, UserInterface $user, SatoshiConverter $convertSatoshi, ConfigRepository $configRepository): Response
     {
         $form = $this->createForm(NewInvoiceType::class);
         $form->handleRequest($request);
@@ -78,7 +79,8 @@ class DashboardController extends Controller
         $amount = $data['amount'];
         $amount = $convertSatoshi->localToSatoshi($amount);
         $description = $data['description'] ?? "";
-        $user->createInvoice($this->lndClient, $amount, $description);
+        $timeoutConfig = $configRepository->getConfig(ConfigRepository::INVOICE_TIMEOUT);
+        $user->createInvoice($this->lndClient, $amount, $description, $timeoutConfig->getValue());
         $this->em->flush();
 
         return $this->redirectToRoute("cashier_dashboard_index");
