@@ -52,11 +52,17 @@ class SettingsController extends Controller
             /** @var ConfigDTO $configDto */
             $configDto = $form->getData();
             $newValue = $configDto->currency;
-            $configRepo->getConfig(ConfigRepository::CURRENCY)->updateValue($newValue);
+            // "App\Exchange\BitmyntNo::NOK"
+            [$exchange, $currency] = explode("::", $newValue);
+            dump($exchange, $currency);
+            $configRepo->getConfig(ConfigRepository::CURRENCY)->updateValue($currency);
+            $configRepo->getConfig(ConfigRepository::EXCHANGE)->updateValue($exchange);
             $configRepo->getConfig(ConfigRepository::LOCALE)->updateValue($configDto->locale);
             $configRepo->getConfig(ConfigRepository::INVOICE_TIMEOUT)->updateValue($configDto->invoice_timeout);
 
             $em->flush();
+            $this->addFlash("success", "Changes saved");
+            return $this->redirectToRoute("settings_config");
         }
 
         return $this->render("Settings/config.html.twig", [

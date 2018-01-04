@@ -42,7 +42,7 @@ class ConfigType extends AbstractType
         foreach ($this->exchangeService->getExchanges() as $exchange) {
             $temp = [];
             foreach ($exchange->getSymbols() as $symbol)
-                $temp[$symbol] = $symbol;
+                $temp[$symbol] = get_class($exchange) ."::" . $symbol;
 
             $symbols[$exchange->getName()] = $temp;
         }

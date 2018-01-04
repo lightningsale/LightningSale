@@ -31,4 +31,13 @@ class ExchangeService
     {
         return $this->exchanges;
     }
+
+    public function getExchange($exchange): Exchange
+    {
+        foreach ($this->exchanges as $e)
+            if (get_class($e) === $exchange)
+                return $e;
+
+        throw new \DomainException("Could not find exchange $exchange!");
+    }
 }

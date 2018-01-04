@@ -12,6 +12,7 @@ namespace App\Service\Twig;
 
 use App\Exchange\CoinMarketCap;
 use App\Repository\ConfigRepository;
+use App\Service\ExchangeService;
 
 class SatoshiConverter extends \Twig_Extension
 {
@@ -21,15 +22,18 @@ class SatoshiConverter extends \Twig_Extension
     public const LOCALE_USD = "en_US.utf8";
     private $currency;
     private $locale;
+    private $exchange;
 
     /**
      * ConvertSatoshi constructor.
      */
-    public function __construct(CoinMarketCap $coinMarketCap, ConfigRepository $configRepository)
+    public function __construct(ExchangeService $exchangeService, ConfigRepository $configRepository)
     {
-        $this->coinMarketCap = $coinMarketCap;
         $this->locale = $configRepository->getConfig(ConfigRepository::LOCALE, self::LOCALE_USD)->getValue();
         $this->currency = $configRepository->getConfig(ConfigRepository::CURRENCY, "USD")->getValue();
+        $exchange = $configRepository->getConfig(ConfigRepository::EXCHANGE, CoinMarketCap::class)->getValue();
+
+        $this->exchange = $exchangeService->getExchange($exchange);
     }
 
 
@@ -48,7 +52,7 @@ class SatoshiConverter extends \Twig_Extension
     }
 
     public function satoshiToLocal($satoshi, int $round = 2) {
-        $price = $this->coinMarketCap->getBuyPrice($this->currency);
+        $price = $this->exchange->getBuyPrice($this->currency);
         $price = (float) $satoshi / self::SATOSHI_IN_BTC * (float) $price;
         return round($price, $round);
     }
