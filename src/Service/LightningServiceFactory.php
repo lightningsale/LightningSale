@@ -33,7 +33,7 @@ class LightningServiceFactory
     {
         $client = new Client([
             'base_uri' => "https://{$this->rpcUsername}:{$this->rpcPassword}@{$this->lndHost}:{$this->lndPort}",
-            'verify' => $this->lndCertFile,
+            'verify' => false, // $this->lndCertFile,
         ]);
 
         return new LndClient($client);
