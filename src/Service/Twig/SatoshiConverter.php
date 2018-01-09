@@ -1,5 +1,4 @@
-<?php
-declare(strict_types=1);
+<?php declare(strict_types=1);
 /**
  * Created by PhpStorm.
  * User: richard
@@ -17,7 +16,6 @@ use App\Service\ExchangeService;
 class SatoshiConverter extends \Twig_Extension
 {
     private const SATOSHI_IN_BTC = 100000000;
-    private $coinMarketCap;
     public const LOCALE_NOK = "nb_NO.utf8";
     public const LOCALE_USD = "en_US.utf8";
     private $currency;
@@ -57,10 +55,9 @@ class SatoshiConverter extends \Twig_Extension
         return round($price, $round);
     }
 
-    public function localToSatoshi(string $local)
+    public function localToSatoshi(float $local): float
     {
-        $local = (float) $local;
-        $price = (float) $this->coinMarketCap->getBuyPrice();
+        $price = (float) $this->exchange->getBuyPrice();
         return round($local / $price * self::SATOSHI_IN_BTC, 0);
     }
 

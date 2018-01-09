@@ -32,7 +32,7 @@
                     </td>
                     <td>
                         <a href="#">{% if loop.first %}Hide{% else %}Show{% endif %}</a>
-                        <a href="{{ path('invoice_details_index', {'rHash': invoice.rHash}) }}">Details</a>
+                        <a class="disabled" href="#" onclick="alert('Not available yet')" data-href="{{ path('invoice_details_index', {'rHash': invoice.rHash}) }}" aria-disabled="true">Details</a>
                         <a href="#">{% if loop.first %}{% else %}Refund{% endif %}</a>
                     </td>
                 </tr>

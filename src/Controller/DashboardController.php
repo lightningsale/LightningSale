@@ -77,11 +77,11 @@ class DashboardController extends Controller
         $form->handleRequest($request);
         $data=$form->getData();
 
-        $amount = $data['amount'];
-        $amount = $convertSatoshi->localToSatoshi($amount);
+        $amount = (float) $data['amount'];
+        $amount = (string) $convertSatoshi->localToSatoshi($amount);
         $description = $data['description'] ?? "";
         $timeoutConfig = $configRepository->getConfig(ConfigRepository::INVOICE_TIMEOUT);
-        $user->createInvoice($this->lndClient, $amount, $description, $timeoutConfig->getValue());
+        $user->createInvoice($this->lndClient, $amount, $description, (int) $timeoutConfig->getValue());
         $this->em->flush();
 
         return $this->redirectToRoute("cashier_dashboard_index");

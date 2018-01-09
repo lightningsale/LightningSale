@@ -49,7 +49,7 @@ class Cashier extends User
     {
         $addInvoiceResponse = $lndClient->addInvoice($memo, $amount, $timeout);
 
-        $invoice = Invoice::fromAddInvoiceResponse($addInvoiceResponse, $this, $memo, $amount);
+        $invoice = Invoice::fromAddInvoiceResponse($addInvoiceResponse, $this);
         $this->invoices->add($invoice);
 
         return $invoice;
