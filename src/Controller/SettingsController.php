@@ -54,7 +54,6 @@ class SettingsController extends Controller
             $newValue = $configDto->currency;
             // "App\Exchange\BitmyntNo::NOK"
             [$exchange, $currency] = explode("::", $newValue);
-            dump($exchange, $currency);
             $configRepo->getConfig(ConfigRepository::CURRENCY)->updateValue($currency);
             $configRepo->getConfig(ConfigRepository::EXCHANGE)->updateValue($exchange);
             $configRepo->getConfig(ConfigRepository::LOCALE)->updateValue($configDto->locale);
@@ -109,13 +108,13 @@ class SettingsController extends Controller
         if ($withdrawForm->isSubmitted() && $withdrawForm->isValid()) {
             $txid = $this->lndClient->sendCoins($withdrawForm->getData());
             $this->addFlash("success", "Funds have been sent with transaction id: $txid");
-            $this->redirectToRoute("settings_index");
+            $this->redirectToRoute("settings_wallet");
         }
 
         foreach ($withdrawForm->getErrors() as $error) {
             $this->addFlash("warning", $error->getMessage());
         }
 
-        return $this->redirectToRoute("settings_index");
+        return $this->redirectToRoute("settings_wallet");
     }
 }

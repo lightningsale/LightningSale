@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Created by PhpStorm.
  * User: richard
@@ -13,6 +13,7 @@ use App\Form\NewInvoiceType;
 use App\Repository\ConfigRepository;
 use App\Service\Twig\SatoshiConverter;
 use Doctrine\ORM\EntityManagerInterface;
+use LightningSale\LndRest\Model\Invoice;
 use LightningSale\LndRest\Resource\LndClient;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -52,14 +53,14 @@ class DashboardController extends Controller
         $form->add("save", SubmitType::class);
 
         $invoices = $this->lndClient->listInvoices(true);
-        $invoices = array_filter($invoices, function(\LightningSale\LndRest\Model\Invoice $invoice) {
+        $invoices = array_filter($invoices, function(Invoice $invoice) {
             return new \DateTime("-1 days") < $invoice->getExpiry();
         });
-        usort($invoices, function (\LightningSale\LndRest\Model\Invoice $a, \LightningSale\LndRest\Model\Invoice $b) {
+        usort($invoices, function (Invoice $a, Invoice $b) {
             return $b->getCreationDate() <=> $a->getCreationDate();
         });
 
-        return $this->render("Dashboard/index.html.twig", [
+        return $this->render("Dashboard/dashboard.html.twig", [
             'invoices' => $invoices,
             'form' => $form->createView(),
             'now' => new \DateTime(),
