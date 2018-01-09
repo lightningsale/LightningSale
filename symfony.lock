@@ -65,9 +65,6 @@
     "endroid/qr-code": {
         "version": "3.1.1"
     },
-    "endroid/qr-code-bundle": {
-        "version": "3.1.1"
-    },
     "google/protobuf": {
         "version": "v3.5.0.1"
     },

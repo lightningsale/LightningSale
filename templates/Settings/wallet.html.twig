@@ -136,7 +136,7 @@
                     </div>
                 </div>
                 <div class="modal-body text-center">
-                    <img class="img-fluid" src="{{ qrcode_data_uri(newAddress) }}">
+                    <img class="img-fluid" style="width: 100%" src="{{ path('cashier_dashboard_app_dashboard_createqrcode', {'message': newAddress}) }}">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

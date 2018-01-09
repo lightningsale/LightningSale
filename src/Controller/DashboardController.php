@@ -13,6 +13,7 @@ use App\Form\NewInvoiceType;
 use App\Repository\ConfigRepository;
 use App\Service\Twig\SatoshiConverter;
 use Doctrine\ORM\EntityManagerInterface;
+use Endroid\QrCode\QrCode;
 use LightningSale\LndRest\Model\Invoice;
 use LightningSale\LndRest\Resource\LndClient;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -97,5 +98,16 @@ class DashboardController extends Controller
             return new RedirectResponse(sprintf("https://www.blocktrail.com/tBTC/tx/%s", $txId));
 
         return new RedirectResponse(sprintf("https://www.blocktrail.com/BTC/tx/%s", $txId));
+    }
+
+    /**
+     * @Route("/qrcode/{message}", requirements={"message": ".+"})
+     */
+    public function createQrCodeAction(string $message): Response
+    {
+        $qrCode = new QrCode($message);
+        $qrCode->setSize(1000);
+
+        return new Response($qrCode->writeString(),200, ['Content-Type' => $qrCode->getContentType()]);
     }
 }

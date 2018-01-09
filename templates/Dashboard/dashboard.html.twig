@@ -39,8 +39,7 @@
                 {% if loop.first %}
                     <tr>
                         <td>
-                            <img src='{{ qrcode_data_uri('lightning:' ~ invoice.paymentRequest, {'size': 150, 'margin': 0}) }}'
-                                 alt='LightningCode'>
+                            <img style="width: 100%" src='{{ path('cashier_dashboard_app_dashboard_createqrcode', {'message': 'lightning:' ~ invoice.paymentRequest}) }}' alt='LightningCode'>
                         </td>
                         <td style="word-break: break-all; display: inline-block;">
                             lightning:{{ invoice.paymentRequest }}
