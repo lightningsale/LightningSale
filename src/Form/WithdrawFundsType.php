@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace App\Form;
 
 
-use LightningSale\LndRest\Model\SendCoinsRequest;
+use LightningSale\LndClient\Model\SendCoinsRequest;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;

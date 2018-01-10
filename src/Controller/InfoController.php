@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Created by PhpStorm.
  * User: richard
@@ -9,7 +10,7 @@
 namespace App\Controller;
 
 
-use LightningSale\LndRest\LndRestClient;
+use LightningSale\LndClient\Client as LndRestClient;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;

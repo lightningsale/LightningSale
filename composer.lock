@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "ab0c5504a451736597f8bbdb77c49de5",
+    "content-hash": "f06f3654f07b3c4a82d92b3e601728b4",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -1321,27 +1321,27 @@
             "time": "2017-01-13T09:11:46+00:00"
         },
         {
-            "name": "lightningsale/lnd-rest",
+            "name": "lightningsale/lnd-client",
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/lightningsale/lnd-rest-php.git",
-                "reference": "9f84c6fb4a4f11e6ab0db7a88c406cfbab35cbea"
+                "url": "https://github.com/lightningsale/lnd-client.git",
+                "reference": "adc8e1a6609f874b74eab2e1342591e538bb90b6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lightningsale/lnd-rest-php/zipball/9f84c6fb4a4f11e6ab0db7a88c406cfbab35cbea",
-                "reference": "9f84c6fb4a4f11e6ab0db7a88c406cfbab35cbea",
+                "url": "https://api.github.com/repos/lightningsale/lnd-client/zipball/adc8e1a6609f874b74eab2e1342591e538bb90b6",
+                "reference": "adc8e1a6609f874b74eab2e1342591e538bb90b6",
                 "shasum": ""
             },
             "require": {
                 "guzzlehttp/guzzle": "^6.3",
-                "php": "^7"
+                "php": "^7.1"
             },
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "LightningSale\\LndRest\\": "src/"
+                    "LightningSale\\LndClient\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -1355,7 +1355,7 @@
                 }
             ],
             "description": "A LND REST Client",
-            "time": "2018-01-03T15:50:07+00:00"
+            "time": "2018-01-10T08:47:11+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -5205,7 +5205,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "lightningsale/lnd-rest": 20,
+        "lightningsale/lnd-client": 20,
         "roave/security-advisories": 20,
         "symfony/lts": 20
     },

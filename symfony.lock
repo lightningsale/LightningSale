@@ -92,7 +92,7 @@
     "league/uri": {
         "version": "4.2.2"
     },
-    "lightningsale/lnd-rest": {
+    "lightningsale/lnd-client": {
         "version": "dev-master"
     },
     "monolog/monolog": {

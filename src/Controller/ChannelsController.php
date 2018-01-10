@@ -12,13 +12,13 @@ namespace App\Controller;
 use App\Form\NewChannelType;
 use App\Form\NewConnectionType;
 use App\Service\Twig\SatoshiConverter;
-use LightningSale\LndRest\LndRestClient;
-use LightningSale\LndRest\Model\ActiveChannel;
-use LightningSale\LndRest\Model\Peer;
-use LightningSale\LndRest\Model\PendingChannelResponse;
-use LightningSale\LndRest\Model\PendingChannelResponseClosedChannel;
-use LightningSale\LndRest\Model\PendingChannelResponseForceClosedChannel;
-use LightningSale\LndRest\Model\PendingChannelResponsePendingOpenChannel;
+use LightningSale\LndClient\Client as LndClient;
+use LightningSale\LndClient\Model\ActiveChannel;
+use LightningSale\LndClient\Model\Peer;
+use LightningSale\LndClient\Model\PendingChannelResponse;
+use LightningSale\LndClient\Model\PendingChannels\ClosingChannel;
+use LightningSale\LndClient\Model\PendingChannels\ForceClosingChannel;
+use LightningSale\LndClient\Model\PendingChannels\OpeningChannel;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -37,7 +37,7 @@ class ChannelsController extends Controller
     private $convertSatoshi;
     private $lndClient;
 
-    public function __construct(SatoshiConverter $convertSatoshi, LndRestClient $lndClient)
+    public function __construct(SatoshiConverter $convertSatoshi, LndClient $lndClient)
     {
         $this->convertSatoshi = $convertSatoshi;
         $this->lndClient = $lndClient;
@@ -173,13 +173,13 @@ class ChannelsController extends Controller
                 array_map(function (ActiveChannel $ac) use($convertSatoshi) {
                     return $convertSatoshi->satoshiToLocal($ac->getLocalBalance());
                 }, $channels),
-                array_map(function (PendingChannelResponsePendingOpenChannel $po) use($convertSatoshi) {
+                array_map(function (OpeningChannel $po) use($convertSatoshi) {
                     return $convertSatoshi->satoshiToLocal($po->getChannel()->getLocalBalance());
                 }, $pendingChannels->getPendingOpenChannels()),
-                array_map(function (PendingChannelResponseClosedChannel $pc) use($convertSatoshi) {
+                array_map(function (ClosingChannel $pc) use($convertSatoshi) {
                     return $convertSatoshi->satoshiToLocal($pc->getChannel()->getLocalBalance());
                 }, $pendingChannels->getPendingClosingChannels()),
-                array_map(function (PendingChannelResponseForceClosedChannel $pf) use($convertSatoshi) {
+                array_map(function (ForceClosingChannel $pf) use($convertSatoshi) {
                     return $convertSatoshi->satoshiToLocal($pf->getChannel()->getLocalBalance());
                 }, $pendingChannels->getPendingForceClosingChannels())
             ),
@@ -187,13 +187,13 @@ class ChannelsController extends Controller
                 array_map(function (ActiveChannel $ac) use($convertSatoshi) {
                     return $convertSatoshi->satoshiToLocal($ac->getRemoteBalance());
                 }, $channels),
-                array_map(function (PendingChannelResponsePendingOpenChannel $po) use($convertSatoshi) {
+                array_map(function (OpeningChannel $po) use($convertSatoshi) {
                     return $convertSatoshi->satoshiToLocal($po->getChannel()->getRemoteBalance());
                 }, $pendingChannels->getPendingOpenChannels()),
-                array_map(function (PendingChannelResponseClosedChannel $pc) use($convertSatoshi) {
+                array_map(function (ClosingChannel $pc) use($convertSatoshi) {
                     return $convertSatoshi->satoshiToLocal($pc->getChannel()->getRemoteBalance());
                 }, $pendingChannels->getPendingClosingChannels()),
-                array_map(function (PendingChannelResponseForceClosedChannel $pf) use($convertSatoshi) {
+                array_map(function (ForceClosingChannel $pf) use($convertSatoshi) {
                     return $convertSatoshi->satoshiToLocal($pf->getChannel()->getRemoteBalance());
                 }, $pendingChannels->getPendingForceClosingChannels())
             ),
@@ -201,13 +201,13 @@ class ChannelsController extends Controller
                 array_map(function (ActiveChannel $ac) {
                     return "Open";
                 }, $channels),
-                array_map(function (PendingChannelResponsePendingOpenChannel $po) {
+                array_map(function (OpeningChannel $po) {
                     return "Pending Open";
                 }, $pendingChannels->getPendingOpenChannels()),
-                array_map(function (PendingChannelResponseClosedChannel $pc) {
+                array_map(function (ClosingChannel $pc) {
                     return "Pending Close";
                 }, $pendingChannels->getPendingClosingChannels()),
-                array_map(function (PendingChannelResponseForceClosedChannel $pf) {
+                array_map(function (ForceClosingChannel $pf) {
                     return "Pending Force Close";
                 }, $pendingChannels->getPendingForceClosingChannels())
             ),
@@ -215,13 +215,13 @@ class ChannelsController extends Controller
                 array_map(function (ActiveChannel $ac) {
                     return "rgba(255, 205, 86, 0.2)";
                 }, $channels),
-                array_map(function (PendingChannelResponsePendingOpenChannel $po) {
+                array_map(function (OpeningChannel $po) {
                     return "rgba(153, 102, 255, 0.2)";
                 }, $pendingChannels->getPendingOpenChannels()),
-                array_map(function (PendingChannelResponseClosedChannel $pc) {
+                array_map(function (ClosingChannel $pc) {
                     return "rgba(153, 102, 255, 0.2)";
                 }, $pendingChannels->getPendingClosingChannels()),
-                array_map(function (PendingChannelResponseForceClosedChannel $pf) {
+                array_map(function (ForceClosingChannel $pf) {
                     return "rgba(153, 102, 255, 0.2)";
                 }, $pendingChannels->getPendingForceClosingChannels())
             ),
@@ -229,13 +229,13 @@ class ChannelsController extends Controller
                 array_map(function (ActiveChannel $ac) {
                     return "rgb(255, 205, 86)";
                 }, $channels),
-                array_map(function (PendingChannelResponsePendingOpenChannel $po) {
+                array_map(function (OpeningChannel $po) {
                     return "rgb(153, 102, 255)";
                 }, $pendingChannels->getPendingOpenChannels()),
-                array_map(function (PendingChannelResponseClosedChannel $pc) {
+                array_map(function (ClosingChannel $pc) {
                     return "rgb(153, 102, 255)";
                 }, $pendingChannels->getPendingClosingChannels()),
-                array_map(function (PendingChannelResponseForceClosedChannel $pf) {
+                array_map(function (ForceClosingChannel $pf) {
                     return "rgb(153, 102, 255)";
                 }, $pendingChannels->getPendingForceClosingChannels())
             ),
@@ -243,13 +243,13 @@ class ChannelsController extends Controller
                 array_map(function (ActiveChannel $ac) {
                     return "rgba(75, 192, 192, 0.2)";
                 }, $channels),
-                array_map(function (PendingChannelResponsePendingOpenChannel $po) {
+                array_map(function (OpeningChannel $po) {
                     return "rgba(153, 102, 255, 0.2)";
                 }, $pendingChannels->getPendingOpenChannels()),
-                array_map(function (PendingChannelResponseClosedChannel $pc) {
+                array_map(function (ClosingChannel $pc) {
                     return "rgba(153, 102, 255, 0.2)";
                 }, $pendingChannels->getPendingClosingChannels()),
-                array_map(function (PendingChannelResponseForceClosedChannel $pf) {
+                array_map(function (ForceClosingChannel $pf) {
                     return "rgba(153, 102, 255, 0.2)";
                 }, $pendingChannels->getPendingForceClosingChannels())
             ),
@@ -257,13 +257,13 @@ class ChannelsController extends Controller
                 array_map(function (ActiveChannel $ac) {
                     return "rgb(75, 192, 192)";
                 }, $channels),
-                array_map(function (PendingChannelResponsePendingOpenChannel $po) {
+                array_map(function (OpeningChannel $po) {
                     return "rgb(153, 102, 255)";
                 }, $pendingChannels->getPendingOpenChannels()),
-                array_map(function (PendingChannelResponseClosedChannel $pc) {
+                array_map(function (ClosingChannel $pc) {
                     return "rgb(153, 102, 255)";
                 }, $pendingChannels->getPendingClosingChannels()),
-                array_map(function (PendingChannelResponseForceClosedChannel $pf) {
+                array_map(function (ForceClosingChannel $pf) {
                     return "rgb(153, 102, 255)";
                 }, $pendingChannels->getPendingForceClosingChannels())
             )

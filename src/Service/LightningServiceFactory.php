@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Created by PhpStorm.
  * User: richard
@@ -10,7 +11,7 @@ namespace App\Service;
 
 
 use GuzzleHttp\Client;
-use LightningSale\LndRest\LndRestClient;
+use LightningSale\LndClient\RestClient;
 
 class LightningServiceFactory
 {
@@ -29,13 +30,13 @@ class LightningServiceFactory
         $this->lndPort = $lndPort;
     }
 
-    public function getLndClient(): LndRestClient
+    public function getLndClient(): RestClient
     {
         $client = new Client([
             'base_uri' => "https://{$this->rpcUsername}:{$this->rpcPassword}@{$this->lndHost}:{$this->lndPort}",
             'verify' => false, // $this->lndCertFile,
         ]);
 
-        return new LndRestClient($client);
+        return new RestClient($client);
     }
 }

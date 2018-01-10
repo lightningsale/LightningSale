@@ -10,8 +10,8 @@ namespace App\Controller;
 
 
 use GuzzleHttp\Exception\ConnectException;
-use LightningSale\LndRest\LndException;
-use LightningSale\LndRest\LndRestClient;
+use LightningSale\LndClient\LndException;
+use LightningSale\LndClient\RestClient;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,9 +22,10 @@ class LndStatusCheckController implements EventSubscriberInterface {
 
     private $lndClient;
     private $engine;
+    private $logger;
 
     public function __construct(
-        LndRestClient $lndClient,
+        RestClient $lndClient,
         \Twig_Environment $engine,
         LoggerInterface $logger
     ){
@@ -56,14 +57,18 @@ class LndStatusCheckController implements EventSubscriberInterface {
                 $this->returnAndRenderMessage($event, "LND is Syncing with the Blockchain, please try again later (aprox. 10 - 15 minutes)");
 
         } catch (LndException $exception) {
+            $this->logger->critical("LndException", $exception);
+
             if ($exception->getCode() === 404)
                 $this->returnAndRenderMessage($event, " Waiting for wallet encryption password. Use `lncli create` to create wallet, or `lncli unlock` to unlock already created wallet.", "warning");
             else
                 throw $exception;
 
         } catch (ConnectException $exception) {
+            $this->logger->critical("Connection error", $exception);
             $this->returnAndRenderMessage($event, "Could not connect to LND, make sure it is running!", "danger");
         } catch (\Exception $exception) {
+            $this->logger->critical("Unkown error", $exception);
             $this->returnAndRenderMessage($event, $exception->getMessage(), "danger");
         }
     }
