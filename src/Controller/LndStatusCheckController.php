@@ -12,6 +12,7 @@ namespace App\Controller;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ConnectException;
 use LightningSale\LndRest\LndClient;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
@@ -22,10 +23,14 @@ class LndStatusCheckController implements EventSubscriberInterface {
     private $lndClient;
     private $engine;
 
-    public function __construct(LndClient $lndClient, \Twig_Environment $engine)
-    {
+    public function __construct(
+        LndClient $lndClient,
+        \Twig_Environment $engine,
+        LoggerInterface $logger
+    ){
         $this->lndClient = $lndClient;
         $this->engine = $engine;
+        $this->logger = $logger;
     }
 
 

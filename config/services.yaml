@@ -20,8 +20,8 @@ services:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']
 
-    LightningSale\LndRest\Resource\LndClient:
-        class: LightningSale\LndRest\Resource\LndClient
+    LightningSale\LndRest\LndClient:
+        class: LightningSale\LndRest\LndClient
         factory: ['@App\Service\LightningServiceFactory','getLndClient']
     App\Service\LightningServiceFactory:
         arguments: ["%lnd_cert%", "%env(RPCPASS)%", "%env(RPCUSER)%", "%env(LND_HOST)%", "%env(LND_PORT)%"]
