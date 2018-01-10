@@ -16,6 +16,11 @@
 
         <div class="card">
             <div class="card-header">Channels</div>
+            <div class="card-text">
+                <a href="{{ path('channels_index') }}" class="btn btn-link">Details</a>
+                <a href="#new_channel_modal" data-toggle="modal" class="btn btn-link disabled">New Channel</a>
+                <a href="#new_connection_modal" data-toggle="modal" class="btn btn-link">New Connection</a>
+            </div>
             <table class="table" style="table-layout: fixed; width: 100%;">
                 <thead>
                 <tr>
@@ -28,6 +33,22 @@
                 </tr>
                 </thead>
                 <tbody>
+                {% for peer in inactivePeers %}
+                    <tr>
+                        <td><span class="text-warning">Connected</span> <small class="text-warning">(no channel)</small></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td class="text-right">
+                            <a href="#">Open channel</a>
+                        </td>
+                    </tr>
+                <tr>
+                    <td colspan="6" style="padding: 0; height: 10px"></td>
+                </tr>
+                {% endfor %}
+
                 {% for channel in openChannels %}
                     <tr>
                         <td><span class="text-success">Open</span> <small class="{{ channel.active? 'text-success' : 'text-warning' }}">({{ channel.active ? 'active' : 'inactive' }})</small></td>
@@ -241,4 +262,37 @@
             }
         });
     </script>
+{% endblock %}
+
+{% block modals %}
+    <div class="modal fade" id="new_channel_modal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">New Channel</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    {{ form(newChannelForm) }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="new_connection_modal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Connect to node</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    {{ form(newConnectionForm) }}
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

@@ -12,7 +12,7 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use LightningSale\LndRest\Model\AddInvoiceResponse;
 use LightningSale\LndRest\Model\Invoice as LndInvoice;
-use LightningSale\LndRest\Resource\LndClient;
+use LightningSale\LndRest\LndClient;
 
 /**
  * Class Transaction

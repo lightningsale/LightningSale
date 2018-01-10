@@ -18,7 +18,7 @@ use App\Repository\ConfigRepository;
 use App\Service\Twig\SatoshiConverter;
 use Doctrine\ORM\EntityManagerInterface;
 use LightningSale\LndRest\Model\ActiveChannel;
-use LightningSale\LndRest\Resource\LndClient;
+use LightningSale\LndRest\LndClient;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;

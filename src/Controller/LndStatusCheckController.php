@@ -11,7 +11,7 @@ namespace App\Controller;
 
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ConnectException;
-use LightningSale\LndRest\Resource\LndClient;
+use LightningSale\LndRest\LndClient;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;

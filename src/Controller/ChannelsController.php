@@ -1,5 +1,4 @@
-<?php
-declare(strict_types=1);
+<?php declare(strict_types=1);
 /**
  * Created by PhpStorm.
  * User: richard
@@ -11,6 +10,7 @@ namespace App\Controller;
 
 
 use App\Form\NewChannelType;
+use App\Form\NewConnectionType;
 use App\Service\Twig\SatoshiConverter;
 use LightningSale\LndRest\Model\ActiveChannel;
 use LightningSale\LndRest\Model\Peer;
@@ -18,7 +18,7 @@ use LightningSale\LndRest\Model\PendingChannelResponse;
 use LightningSale\LndRest\Model\PendingChannelResponseClosedChannel;
 use LightningSale\LndRest\Model\PendingChannelResponseForceClosedChannel;
 use LightningSale\LndRest\Model\PendingChannelResponsePendingOpenChannel;
-use LightningSale\LndRest\Resource\LndClient;
+use LightningSale\LndRest\LndClient;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -49,14 +49,39 @@ class ChannelsController extends Controller
      */
     public function indexAction(): Response
     {
+        $peers = $this->lndClient->listPeers();
         $channels = $this->lndClient->listChannels();
         $pendingChannels = $this->lndClient->pendingChannels();
         $channelDatasets = self::orderChartData($channels, $pendingChannels, $this->convertSatoshi);
+        $newChannelForm = $this->createForm(NewChannelType::class, null, ['action' => $this->generateUrl("channels_new_channel")]);
+        $newConnectionForm = $this->createForm(NewConnectionType::class, null, ['action' => $this->generateUrl("channels_connection_new")]);
+
+        $activePeers = [];
+        foreach ($channels as $channel)
+            $activePeers[$channel->getRemotePubkey()] = true;
+
+        foreach ($pendingChannels->getPendingOpenChannels() as $pendingChannel)
+            $activePeers[$pendingChannel->getChannel()->getRemotePubkey()] = true;
+
+        foreach ($pendingChannels->getPendingClosingChannels() as $pendingChannel)
+            $activePeers[$pendingChannel->getChannel()->getRemotePubkey()] = true;
+
+        foreach ($pendingChannels->getPendingForceClosingChannels() as $pendingChannel)
+            $activePeers[$pendingChannel->getChannel()->getRemotePubkey()] = true;
+
+        /** @var Peer[] $inactivePeers */
+        $inactivePeers = [];
+        foreach ($peers as $peer)
+            if (!isset($activePeers[$peer->getPubKey()]))
+                $inactivePeers[] = $peer;
 
         return $this->render("Channels/channels.html.twig", [
             'openChannels' => $channels,
             'pendingChannels' => $pendingChannels,
             'channelDatasets' => $channelDatasets,
+            'inactivePeers'   => $inactivePeers,
+            'newChannelForm'  => $newChannelForm->createView(),
+            'newConnectionForm'  => $newConnectionForm->createView(),
         ]);
     }
 
@@ -95,20 +120,45 @@ class ChannelsController extends Controller
             }
             if (!$peer) {
                 $this->addFlash("warning", "Can't connect to peer!");
-                return $this->redirectToRoute("settings_index");
+                return $this->redirectToRoute("channels_index");
             }
 
             $txid = $this->lndClient->openChannelSync($pubKey, (string) $data['amount']);
 
             $this->addFlash("success", "New channel opened (txid: $txid)");
-            $this->redirectToRoute("settings_index");
+            $this->redirectToRoute("channels_index");
         }
 
         foreach ($form->getErrors() as $error) {
             $this->addFlash("warning", $error->getMessage());
         }
 
-        return $this->redirectToRoute("settings_index");
+        return $this->redirectToRoute("channels_index");
+    }
+
+    /**
+     * @Route("/new_connection", name="connection_new")
+     */
+    public function newConnectionAction(Request $request) {
+        $form = $this->createForm(NewChannelType::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $pubKey = $data['pubkey'];
+            $host = $data['host'];
+
+            $this->lndClient->connectPeer($pubKey, $host, true);
+
+            $this->addFlash("success", "New channel opened with $host");
+            $this->redirectToRoute("channels_index");
+        }
+
+        foreach ($form->getErrors() as $error) {
+            $this->addFlash("warning", $error->getMessage());
+        }
+
+        return $this->redirectToRoute("channels_index");
     }
 
     /**
@@ -223,7 +273,6 @@ class ChannelsController extends Controller
     private function findPeer($pubKey): ?Peer
     {
         $peers = $this->lndClient->listPeers();
-        dump($peers);
         foreach ($peers as $p)
             if ($p->getPubKey() === $pubKey)
                 return $p;

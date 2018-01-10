@@ -13,7 +13,7 @@ use App\Exchange\CoinMarketCap;
 use App\Service\ExchangeService;
 use GuzzleHttp\Client;
 use LightningSale\LndRest\Model\SendRequest;
-use LightningSale\LndRest\Resource\LndClient;
+use LightningSale\LndRest\LndClient;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

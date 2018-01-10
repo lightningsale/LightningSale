@@ -9,7 +9,7 @@
 namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use LightningSale\LndRest\Resource\LndClient;
+use LightningSale\LndRest\LndClient;
 use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
 
 /**

@@ -10,7 +10,7 @@ namespace App\Service;
 
 
 use GuzzleHttp\Client;
-use LightningSale\LndRest\Resource\LndClient;
+use LightningSale\LndRest\LndClient;
 
 class LightningServiceFactory
 {
