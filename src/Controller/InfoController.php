@@ -9,7 +9,7 @@
 namespace App\Controller;
 
 
-use LightningSale\LndRest\LndClient;
+use LightningSale\LndRest\LndRestClient;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -26,7 +26,7 @@ class InfoController extends Controller
     /**
      * @Route("/", name="index")
      */
-    public function infoAction(LndClient $lndClient): Response
+    public function infoAction(LndRestClient $lndClient): Response
     {
         $externalIp = $this->getParameter("external_ip");
         $externalPort = $this->getParameter("external_port");

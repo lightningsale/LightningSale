@@ -10,7 +10,7 @@ namespace App\Service;
 
 
 use GuzzleHttp\Client;
-use LightningSale\LndRest\LndClient;
+use LightningSale\LndRest\LndRestClient;
 
 class LightningServiceFactory
 {
@@ -29,13 +29,13 @@ class LightningServiceFactory
         $this->lndPort = $lndPort;
     }
 
-    public function getLndClient(): LndClient
+    public function getLndClient(): LndRestClient
     {
         $client = new Client([
             'base_uri' => "https://{$this->rpcUsername}:{$this->rpcPassword}@{$this->lndHost}:{$this->lndPort}",
             'verify' => false, // $this->lndCertFile,
         ]);
 
-        return new LndClient($client);
+        return new LndRestClient($client);
     }
 }

@@ -17,8 +17,8 @@ use App\Form\WithdrawFundsType;
 use App\Repository\ConfigRepository;
 use App\Service\Twig\SatoshiConverter;
 use Doctrine\ORM\EntityManagerInterface;
+use LightningSale\LndRest\LndRestClient;
 use LightningSale\LndRest\Model\ActiveChannel;
-use LightningSale\LndRest\LndClient;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -35,7 +35,7 @@ class SettingsController extends Controller
 {
     private $lndClient;
 
-    public function __construct(LndClient $lndClient)
+    public function __construct(LndRestClient $lndClient)
     {
         $this->lndClient = $lndClient;
     }

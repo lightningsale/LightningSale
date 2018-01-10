@@ -9,8 +9,7 @@
 namespace App\Controller;
 
 
-use App\Entity\Invoice;
-use LightningSale\LndRest\LndClient;
+use LightningSale\LndRest\LndRestClient;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -27,7 +26,7 @@ class InvoiceDetailsController extends Controller
     /**
      * @Route("", name="index")
      */
-    public function indexAction(string $rHash, LndClient $lndClient): Response
+    public function indexAction(string $rHash, LndRestClient $lndClient): Response
     {
         return $this->render("InvoiceDetails/index.html.twig",[
             'invoice' => $lndClient->lookupInvoice($rHash)

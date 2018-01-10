@@ -9,7 +9,7 @@
 namespace App\Controller;
 
 
-use LightningSale\LndRest\LndClient;
+use LightningSale\LndRest\LndRestClient;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -26,7 +26,7 @@ class TransactionsController extends Controller
     /**
      * @Route("/", name="index")
      */
-    public function indexAction(LndClient $lndClient): Response
+    public function indexAction(LndRestClient $lndClient): Response
     {
         return $this->render("Transactions/index.html.twig", [
             'transactions' => $lndClient->getTransactions(),

@@ -12,13 +12,13 @@ namespace App\Controller;
 use App\Form\NewChannelType;
 use App\Form\NewConnectionType;
 use App\Service\Twig\SatoshiConverter;
+use LightningSale\LndRest\LndRestClient;
 use LightningSale\LndRest\Model\ActiveChannel;
 use LightningSale\LndRest\Model\Peer;
 use LightningSale\LndRest\Model\PendingChannelResponse;
 use LightningSale\LndRest\Model\PendingChannelResponseClosedChannel;
 use LightningSale\LndRest\Model\PendingChannelResponseForceClosedChannel;
 use LightningSale\LndRest\Model\PendingChannelResponsePendingOpenChannel;
-use LightningSale\LndRest\LndClient;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -37,7 +37,7 @@ class ChannelsController extends Controller
     private $convertSatoshi;
     private $lndClient;
 
-    public function __construct(SatoshiConverter $convertSatoshi, LndClient $lndClient)
+    public function __construct(SatoshiConverter $convertSatoshi, LndRestClient $lndClient)
     {
         $this->convertSatoshi = $convertSatoshi;
         $this->lndClient = $lndClient;

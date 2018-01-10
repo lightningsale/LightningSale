@@ -8,7 +8,7 @@
 
 namespace App\Command\Lightning;
 
-use LightningSale\LndRest\LndClient;
+use LightningSale\LndRest\LndRestClient;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -17,7 +17,7 @@ class Info extends Command
 {
     private $lndClient;
 
-    public function __construct(LndClient $lndClient)
+    public function __construct(LndRestClient $lndClient)
     {
         $this->lndClient = $lndClient;
         parent::__construct("lightning:info");

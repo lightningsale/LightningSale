@@ -14,8 +14,8 @@ use App\Repository\ConfigRepository;
 use App\Service\Twig\SatoshiConverter;
 use Doctrine\ORM\EntityManagerInterface;
 use Endroid\QrCode\QrCode;
+use LightningSale\LndRest\LndRestClient;
 use LightningSale\LndRest\Model\Invoice;
-use LightningSale\LndRest\LndClient;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -36,7 +36,7 @@ class DashboardController extends Controller
     private $lndClient;
     private $em;
 
-    public function __construct(LndClient $lndClient, EntityManagerInterface $em)
+    public function __construct(LndRestClient $lndClient, EntityManagerInterface $em)
     {
         $this->lndClient = $lndClient;
         $this->em = $em;
@@ -91,7 +91,7 @@ class DashboardController extends Controller
     /**
      * @Route("/explorer/{txId}", name="explorer")
      */
-    public function transactionAction(string $txId, LndClient $lndClient): Response
+    public function transactionAction(string $txId, LndRestClient $lndClient): Response
     {
         $testnet = $lndClient->getInfo()->isTestnet();
         if ($testnet)

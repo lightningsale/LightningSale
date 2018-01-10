@@ -10,9 +10,9 @@ namespace App\Entity;
 
 
 use Doctrine\ORM\Mapping as ORM;
+use LightningSale\LndRest\LndRestClient;
 use LightningSale\LndRest\Model\AddInvoiceResponse;
 use LightningSale\LndRest\Model\Invoice as LndInvoice;
-use LightningSale\LndRest\LndClient;
 
 /**
  * Class Transaction
@@ -79,7 +79,7 @@ class Invoice
         return new Invoice($addInvoiceResponse->getRHash(), $user);
     }
 
-    public function getInvoice(LndClient $lndClient): LndInvoice
+    public function getInvoice(LndRestClient $lndClient): LndInvoice
     {
         return $lndClient->lookupInvoice($this->rHashString);
     }

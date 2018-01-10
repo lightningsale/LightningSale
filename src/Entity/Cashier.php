@@ -9,7 +9,7 @@
 namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use LightningSale\LndRest\LndClient;
+use LightningSale\LndRest\LndRestClient;
 use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
 
 /**
@@ -45,7 +45,7 @@ class Cashier extends User
         return ["ROLE_CASHIER"];
     }
 
-    public function createInvoice(LndClient $lndClient, string $amount, string $memo = "", int $timeout = 3600): Invoice
+    public function createInvoice(LndRestClient $lndClient, string $amount, string $memo = "", int $timeout = 3600): Invoice
     {
         $addInvoiceResponse = $lndClient->addInvoice($memo, $amount, $timeout);
 
