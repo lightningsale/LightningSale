@@ -52,6 +52,7 @@ class ChannelsController extends Controller
         $peers = $this->lndClient->listPeers();
         $channels = $this->lndClient->listChannels();
         $pendingChannels = $this->lndClient->pendingChannels();
+        $walletBalance = $this->lndClient->walletBalance();
         $channelDatasets = self::orderChartData($channels, $pendingChannels, $this->convertSatoshi);
         $newChannelForm = $this->createForm(NewChannelType::class, null, ['action' => $this->generateUrl("channels_new_channel")]);
         $newConnectionForm = $this->createForm(NewConnectionType::class, null, ['action' => $this->generateUrl("channels_connection_new")]);
@@ -82,6 +83,7 @@ class ChannelsController extends Controller
             'inactivePeers'   => $inactivePeers,
             'newChannelForm'  => $newChannelForm->createView(),
             'newConnectionForm'  => $newConnectionForm->createView(),
+            'walletBalance'   => $walletBalance,
         ]);
     }
 
@@ -96,6 +98,28 @@ class ChannelsController extends Controller
         return $this->redirectToRoute("channels_index");
     }
 
+    /**
+     * @Route("/open_channel/{pubkey}", name="open_channel")
+     */
+    public function openChannelAction(string $pubkey, Request $request, SatoshiConverter $satoshiConverter) {
+        $amount = (float) $request->get("amount");
+        $amount = (string) $satoshiConverter->localToSatoshi($amount);
+        $point = $this->lndClient->openChannel($pubkey,$amount);
+
+        $this->addFlash("success","Channel is opening {$point->getFundingTxidStr()}");
+        return $this->redirectToRoute("channels_index");
+    }
+
+    /**
+     * @Route("/disconnect/{pubkey}", name="disconnect")
+     */
+    public function disconnectNode(string $pubkey) {
+        $node = $this->lndClient->getNodeInfo($pubkey);
+        $this->lndClient->disconnectPeer($pubkey);
+
+        $this->addFlash("success", "Disconnected from {$node->getNode()->getAddresses()[0]->getAddr()}");
+        return $this->redirectToRoute("channels_index");
+    }
 
     /**
      * @Route("/new_channel", name="new_channel")
@@ -140,7 +164,7 @@ class ChannelsController extends Controller
      * @Route("/new_connection", name="connection_new")
      */
     public function newConnectionAction(Request $request) {
-        $form = $this->createForm(NewChannelType::class);
+        $form = $this->createForm(NewConnectionType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

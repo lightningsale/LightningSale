@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "f06f3654f07b3c4a82d92b3e601728b4",
+    "content-hash": "0b493b23ae9588d49b251438890eb4e1",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -1326,12 +1326,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/lightningsale/lnd-client.git",
-                "reference": "adc8e1a6609f874b74eab2e1342591e538bb90b6"
+                "reference": "aeeef8b9e29bc4e08873ebf8284c0461d898e55c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lightningsale/lnd-client/zipball/adc8e1a6609f874b74eab2e1342591e538bb90b6",
-                "reference": "adc8e1a6609f874b74eab2e1342591e538bb90b6",
+                "url": "https://api.github.com/repos/lightningsale/lnd-client/zipball/aeeef8b9e29bc4e08873ebf8284c0461d898e55c",
+                "reference": "aeeef8b9e29bc4e08873ebf8284c0461d898e55c",
                 "shasum": ""
             },
             "require": {
@@ -1355,7 +1355,7 @@
                 }
             ],
             "description": "A LND REST Client",
-            "time": "2018-01-10T08:47:11+00:00"
+            "time": "2018-01-10T09:25:46+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -5200,6 +5200,72 @@
                 "environment"
             ],
             "time": "2017-12-08T15:46:13+00:00"
+        },
+        {
+            "name": "symfony/phpunit-bridge",
+            "version": "v4.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/phpunit-bridge.git",
+                "reference": "b989c646eb422f3ad583f0be3b482a774668e86f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/phpunit-bridge/zipball/b989c646eb422f3ad583f0be3b482a774668e86f",
+                "reference": "b989c646eb422f3ad583f0be3b482a774668e86f",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "conflict": {
+                "phpunit/phpunit": "<4.8.35|<5.4.3,>=5.0"
+            },
+            "suggest": {
+                "ext-zip": "Zip support is required when using bin/simple-phpunit",
+                "symfony/debug": "For tracking deprecated interfaces usages at runtime with DebugClassLoader"
+            },
+            "bin": [
+                "bin/simple-phpunit"
+            ],
+            "type": "symfony-bridge",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "4.0-dev"
+                },
+                "thanks": {
+                    "name": "phpunit/phpunit",
+                    "url": "https://github.com/sebastianbergmann/phpunit"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "bootstrap.php"
+                ],
+                "psr-4": {
+                    "Symfony\\Bridge\\PhpUnit\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony PHPUnit Bridge",
+            "homepage": "https://symfony.com",
+            "time": "2018-01-04T17:20:09+00:00"
         }
     ],
     "aliases": [],

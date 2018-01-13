@@ -10,28 +10,27 @@ namespace App\Service\Twig;
 
 
 use App\Exchange\CoinMarketCap;
+use App\Exchange\Exchange;
 use App\Repository\ConfigRepository;
 use App\Service\ExchangeService;
+use Symfony\Component\Intl\Intl;
 
 class SatoshiConverter extends \Twig_Extension
 {
-    private const SATOSHI_IN_BTC = 100000000;
+    private const SATOSHI_IN_BTC = 100000000.0;
     public const LOCALE_NOK = "nb_NO.utf8";
     public const LOCALE_USD = "en_US.utf8";
-    private $currency;
-    private $locale;
-    private $exchange;
+    private $configRepository;
+    private $exchangeService;
 
     /**
      * ConvertSatoshi constructor.
      */
     public function __construct(ExchangeService $exchangeService, ConfigRepository $configRepository)
     {
-        $this->locale = $configRepository->getConfig(ConfigRepository::LOCALE, self::LOCALE_USD)->getValue();
-        $this->currency = $configRepository->getConfig(ConfigRepository::CURRENCY, "USD")->getValue();
-        $exchange = $configRepository->getConfig(ConfigRepository::EXCHANGE, CoinMarketCap::class)->getValue();
+        $this->configRepository = $configRepository;
+        $this->exchangeService = $exchangeService;
 
-        $this->exchange = $exchangeService->getExchange($exchange);
     }
 
 
@@ -40,31 +39,65 @@ class SatoshiConverter extends \Twig_Extension
         return [
             new \Twig_SimpleFilter("satoshiToMilliBtc", [$this, 'satoshiToMilliBtc'], ['is_safe' => ['html']]),
             new \Twig_SimpleFilter("satoshiToLocal", [$this, 'satoshiToLocal'], ['is_safe' => ['html']]),
-            new \Twig_SimpleFilter("formatSatoshi", [$this, 'formatSatoshi'])
+            new \Twig_SimpleFilter("formatSatoshi", [$this, 'formatSatoshi']),
         ];
     }
 
+    public function getFunctions()
+    {
+        return [
+            new \Twig_SimpleFunction("currencySymbol", [$this, 'currencySymbol']),
+        ];
+    }
+
+
     public function satoshiToMilliBtc(string $satoshi, int $round = 2)
     {
-        return round((float) $satoshi / self::SATOSHI_IN_BTC / 1000, $round);
+        $satoshi = (float) $satoshi;
+        $mBTC = $satoshi / self::SATOSHI_IN_BTC * 1000;
+        return round($mBTC, $round);
     }
 
     public function satoshiToLocal($satoshi, int $round = 2) {
-        $price = $this->exchange->getBuyPrice($this->currency);
+        $price = $this->getExhange()->getBuyPrice($this->getCurrency());
         $price = (float) $satoshi / self::SATOSHI_IN_BTC * (float) $price;
         return round($price, $round);
     }
 
     public function localToSatoshi(float $local): float
     {
-        $price = (float) $this->exchange->getBuyPrice();
+        $price = (float) $this->getExhange()->getBuyPrice();
         return round($local / $price * self::SATOSHI_IN_BTC, 0);
     }
 
     public function formatSatoshi($satoshi)
     {
         $value = $this->satoshiToLocal($satoshi, 4);
-        $formatter = \NumberFormatter::create($this->locale, \NumberFormatter::CURRENCY);
-        return $formatter->formatCurrency($value, $this->currency);
+        $formatter = \NumberFormatter::create($this->getLocale(), \NumberFormatter::CURRENCY);
+        return $formatter->formatCurrency($value, $this->getCurrency());
+    }
+
+    public function currencySymbol() {
+        return Intl::getCurrencyBundle()->getCurrencySymbol($this->getCurrency());
+    }
+
+    private function getLocale()
+    {
+        return $this->configRepository->getConfig(ConfigRepository::LOCALE, self::LOCALE_USD)->getValue();
+    }
+
+    private function getCurrency()
+    {
+        return $this->configRepository->getConfig(ConfigRepository::CURRENCY, "USD")->getValue();
+    }
+
+    private function getExhange(): Exchange
+    {
+        if (isset($this->exchange))
+            return $this->exchange;
+
+        $exchange = $this->configRepository->getConfig(ConfigRepository::EXCHANGE, CoinMarketCap::class)->getValue();
+        $this->exchange = $this->exchangeService->getExchange($exchange);
+        return $this->exchange;
     }
 }

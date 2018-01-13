@@ -17,8 +17,8 @@
         <div class="card">
             <div class="card-header">Channels</div>
             <div class="card-text">
-                <a href="{{ path('channels_index') }}" class="btn btn-link">Details</a>
                 <a href="#new_channel_modal" data-toggle="modal" class="btn btn-link disabled">New Channel</a>
+                <a href="#" data-toggle="modal" class="btn btn-link disabled">Pay invoice</a>
                 <a href="#new_connection_modal" data-toggle="modal" class="btn btn-link">New Connection</a>
             </div>
             <table class="table" style="table-layout: fixed; width: 100%;">
@@ -36,12 +36,10 @@
                 {% for peer in inactivePeers %}
                     <tr>
                         <td><span class="text-warning">Connected</span> <small class="text-warning">(no channel)</small></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td colspan="4"><small>{{ peer.pubKey }} @ {{ peer.address }}</small></td>
                         <td class="text-right">
-                            <a href="#">Open channel</a>
+                            <a href="#new_channel_modal_{{ peer.peerId }}" data-toggle="modal" class="btn btn-link">New Channel</a>
+                            <a href="#new_channel_modal_{{ peer.peerId }}" data-toggle="modal" class="btn btn-link">Disconnect</a>
                         </td>
                     </tr>
                 <tr>
@@ -280,6 +278,48 @@
             </div>
         </div>
     </div>
+    {% for peer in inactivePeers %}
+
+        <div class="modal fade" id="new_channel_modal_{{ peer.peerId }}" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">New Channel</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{{ path('channels_open_channel', {'pubkey': peer.pubKey}) }}">
+
+
+                            <div class="form-group row">
+                                <label for="amount" class="col-form-label col-sm-2 form-control-label required">Amount</label>
+                                <div class="col-sm-10">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" required="required" name="amount" value="">
+                                        <span class="input-group-addon">{{ currencySymbol() }}</span>
+                                    </div>
+                                    <span class="form-text text-muted">
+                                        Available funds: {{ walletBalance.confirmedBalance|satoshiToLocal }}{{ currencySymbol() }}{% if walletBalance.unconfirmedBalance %} (unconfirmed: {{ walletBalance.unconfirmedBalance|satoshiToLocal }}{{ currencySymbol() }}){% endif %}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col-sm-2"></div>
+                                <div class="col-sm-10">
+                                    <button type="submit" class="btn-secondary btn">Open</button>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    {% endfor %}
     <div class="modal fade" id="new_connection_modal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">

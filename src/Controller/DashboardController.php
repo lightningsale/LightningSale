@@ -19,7 +19,6 @@ use LightningSale\LndClient\Model\Invoice;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -51,7 +50,6 @@ class DashboardController extends Controller
         $form = $this->createForm(NewInvoiceType::class,null, [
             'action' => $this->generateUrl("cashier_dashboard_new_invoice")
         ]);
-        $form->add("save", SubmitType::class);
 
         $invoices = $this->lndClient->listInvoices(true);
         $invoices = array_filter($invoices, function(Invoice $invoice) {
