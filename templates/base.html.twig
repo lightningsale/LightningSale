@@ -36,7 +36,7 @@
                     {% endif %}
 
                     <li class="nav-item {% if path=="info_index" %}active{% endif %}"><a href="{{ path('info_index') }}" class="nav-link"><i class="fa fa-info"></i> Info</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link"><i class="fa fa-user"></i> Profile</a></li>
+                    <li class="nav-item"><a href="{{ path('profile_index') }}" class="nav-link"><i class="fa fa-user"></i> Profile</a></li>
                     <li class="nav-item"><a href="{{ path('login_out') }}" class="nav-link">
                             <i class="fa fa-sign-out"></i> Sign out</a>
                     </li>

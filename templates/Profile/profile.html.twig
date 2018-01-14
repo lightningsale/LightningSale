@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container">
+
+            <div class="card">
+                <div class="card-header">Profile</div>
+                <div class="card-body">
+                    {{ form(emailForm) }}
+
+                    <hr>
+                    {{ form(changePasswordForm) }}
+
+                </div>
+            </div>
+    </div>
+
+{% endblock %}
+

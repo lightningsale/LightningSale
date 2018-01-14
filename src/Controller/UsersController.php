@@ -15,6 +15,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Class TransactionsController
@@ -44,7 +45,7 @@ class UsersController extends Controller
     /**
      * @Route("/details/{email}", name="detail")
      */
-    public function detailsAction(User $details): Response
+    public function detailsAction(User $details, UserInterface $user): Response
     {
         return $this->render("Users/detail.html.twig", [
             'user' => $details,
