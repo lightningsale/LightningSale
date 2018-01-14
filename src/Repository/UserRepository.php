@@ -65,4 +65,12 @@ class UserRepository implements UserProviderInterface
     {
         return in_array($class, [User::class, Merchant::class, Cashier::class], true);
     }
+
+    /**
+     * @return User[]|array
+     */
+    public function findAll()
+    {
+        return $this->userRepo->findAll();
+    }
 }

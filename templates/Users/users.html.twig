@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <div class="container">
+
+        <div class="card">
+            <div class="card-header">Users</div>
+            <table class="table" style="table-layout: fixed; width: 100%;">
+                <thead class="table-dark">
+                <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td>
+                            {% if user is Merchant %}Administrator
+                            {% elseif user is Cashier %}User
+                            {% endif %}
+                        </td>
+                        <td>{{ user.email }}</td>
+                        <td>
+                            <a href="{{ path('users_detail', {'email': user.email}) }}">Details</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

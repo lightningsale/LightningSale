@@ -29,7 +29,7 @@ class TransactionsController extends Controller
      */
     public function indexAction(LndRestClient $lndClient): Response
     {
-        return $this->render("Transactions/index.html.twig", [
+        return $this->render("Transactions/transactions.html.twig", [
             'transactions' => $lndClient->getTransactions(),
         ]);
     }
