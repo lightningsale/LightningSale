@@ -44,6 +44,74 @@ Or use github.com/lightningsale/LightningSale and `docker-compose up`
  - docker-compose exec pos php bin/console doctrine:schema:update --force
  - docker-compose exec pos php bin/console app:create:user <-- Create first user
 
+## _Production Docker-compose.yml file_ (not yet!)
+```yaml
+version: "2.1"
+
+services:
+  lnd:
+    image: lightningsale/docker-lnd
+    environment:
+      - EXTERNALIP=92.221.98.237
+      - EXTERNALPORT=9736
+      - RPCUSER=lightningsale
+      - RPCPASS=lightningsale
+      - NETWORK=testnet
+      - CHAIN=bitcoin
+      - DEBUG=info
+      - REDIS_URL=redis
+    volumes:
+      - lnd:/root/.lnd
+    ports:
+      - 9736:9736
+      - 127.0.0.1:10009:10009
+    expose: ["8080"]
+    entrypoint: ["./start-lnd.sh"]
+    hostname: lnd
+    command:
+      - "--neutrino.active"
+      - "--neutrino.connect=faucet.lightning.community"
+      - "--autopilot.active"
+      - "--no-macaroons"
+      - "--peerport=9736"
+  pos:
+    image: lightningsale/lightning-sale
+    ports:
+      - 80:80
+    environment:
+      - APP_ENV=prod
+      - APP_DEBUG=false
+      - APP_SECRET=22375fd9fdfe7235fb7386334f6e9632
+      - DATABASE_URL=mysql://root:abcd1234@mysql:3306/lightningsale
+      - LND_HOST=lnd
+      - LND_PORT=8080
+      - EXTERNALIP=92.221.98.237
+      - EXTERNALPORT=9736
+      - RPCUSER=lightningsale
+      - RPCPASS=lightningsale
+      - REDIS_URL=redis
+    depends_on:
+      - mysql
+      - lnd
+    volumes:
+      - .:/var/www
+      - lnd:/var/www/var/lnd
+  mysql:
+    image: mysql
+    ports:
+      - 127.0.0.1:3307:3306
+    volumes:
+      - mysql:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=abcd1234
+  redis:
+    image: redis
+volumes:
+  lnd: ~
+  mysql: ~
+
+```
+
 ## LightningSale TODO:
  - [ ] Copywriting
  - [ ] Design/Style

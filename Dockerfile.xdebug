@@ -1,5 +1,6 @@
 FROM richard87/php-base
 
+WORKDIR /var/www
 COPY composer.json composer.lock symfony.lock ./
 
 RUN pecl install xdebug-2.5.5 && docker-php-ext-enable xdebug

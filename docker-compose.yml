@@ -36,7 +36,7 @@ services:
   mysql:
     image: mysql
     ports:
-      - 3307:3306
+      - 127.0.0.1:3307:3306
     volumes:
       - mysql:/var/lib/mysql
     environment:
