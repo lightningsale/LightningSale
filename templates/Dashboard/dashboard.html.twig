@@ -4,7 +4,21 @@
     <div class="container ">
         <div class="row justify-content-center align-items-center">
             <div class="col-md-8">
-                {{ form(form) }}
+                {{ form_start(form) }}
+
+                <div class="form-group row">
+                    {{ form_label(form.children.amount) }}
+                    <div class="col-sm-10">
+                        <div class="input-group input-group-lg">
+                            {{ form_widget(form.children.amount, {'attr': {'class': 'form-control-lg'}}) }}
+                            <div class="input-group-append">
+                                <div class="input-group-text">{{ currencySymbol() }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{ form_end(form) }}
             </div>
         </div>
         <hr>

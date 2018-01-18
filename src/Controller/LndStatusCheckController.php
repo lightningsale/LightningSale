@@ -47,7 +47,9 @@ class LndStatusCheckController implements EventSubscriberInterface {
         if (!$event->isMasterRequest())
             return;
 
-        if (strpos($event->getRequest()->getPathInfo(), "/_wdt") === 0)
+        $pathInfo = $event->getRequest()->getPathInfo();
+        if (strpos($pathInfo, "/_wdt") === 0
+            || strpos($pathInfo, "/_profile") === 0)
             return;
 
         try {

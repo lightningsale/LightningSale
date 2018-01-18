@@ -66,8 +66,9 @@ class SatoshiConverter extends \Twig_Extension
 
     public function localToSatoshi(float $local): float
     {
-        $price = (float) $this->getExhange()->getBuyPrice();
-        return round($local / $price * self::SATOSHI_IN_BTC, 0);
+        $price = (float) $this->getExhange()->getBuyPrice($this->getCurrency());
+        $satoshi = $local / $price * self::SATOSHI_IN_BTC;
+        return round($satoshi);
     }
 
     public function formatSatoshi($satoshi)
