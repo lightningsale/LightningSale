@@ -9,7 +9,7 @@
 namespace App\Controller;
 
 use App\Entity\Cashier;
-use App\Form\NewInvoiceType;
+use App\Form\Config\NewInvoiceType;
 use App\Repository\ConfigRepository;
 use App\Service\Twig\SatoshiConverter;
 use Doctrine\ORM\EntityManagerInterface;

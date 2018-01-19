@@ -5,6 +5,7 @@ parameters:
     external_ip: "%env(EXTERNALIP)%"
     external_port: "%env(EXTERNALPORT)%"
     redis_dsn: "redis://%env(REDIS_URL)%"
+    locale: 'en'
 
 services:
     _defaults:

@@ -9,8 +9,8 @@
 namespace App\Controller;
 
 
-use App\Form\NewChannelType;
-use App\Form\NewConnectionType;
+use App\Form\Config\NewChannelType;
+use App\Form\Config\NewConnectionType;
 use App\Service\Twig\SatoshiConverter;
 use LightningSale\LndClient\Client as LndClient;
 use LightningSale\LndClient\Model\ActiveChannel;
@@ -131,23 +131,7 @@ class ChannelsController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
             $pubKey = $data['pubkey'];
-            $host = $data['host'];
-            $peer = $this->findPeer($pubKey);
-            if (!$peer)
-                $this->lndClient->connectPeer($pubKey, $host, true);
-
-            $timeout = 60;
-            while ($timeout>0 && !$peer){
-                $peer = $this->findPeer($pubKey);
-                if (!$peer)
-                    sleep(1);
-            }
-            if (!$peer) {
-                $this->addFlash("warning", "Can't connect to peer!");
-                return $this->redirectToRoute("channels_index");
-            }
-
-            $txid = $this->lndClient->openChannelSync($pubKey, (string) $data['amount']);
+            $txid = $this->lndClient->openChannel($pubKey, (string) $data['amount']);
 
             $this->addFlash("success", "New channel opened (txid: $txid)");
             $this->redirectToRoute("channels_index");
@@ -174,7 +158,7 @@ class ChannelsController extends Controller
 
             $this->lndClient->connectPeer($pubKey, $host, true);
 
-            $this->addFlash("success", "New channel opened with $host");
+            $this->addFlash("success", "Connected to $host");
             $this->redirectToRoute("channels_index");
         }
 
@@ -292,15 +276,5 @@ class ChannelsController extends Controller
                 }, $pendingChannels->getPendingForceClosingChannels())
             )
         ];
-    }
-
-    private function findPeer($pubKey): ?Peer
-    {
-        $peers = $this->lndClient->listPeers();
-        foreach ($peers as $p)
-            if ($p->getPubKey() === $pubKey)
-                return $p;
-
-        return null;
     }
 }

@@ -54,9 +54,4 @@ class Cashier extends User
 
         return $invoice;
     }
-
-    public function changeEmail(string $email)
-    {
-        $this->email = $email;
-    }
 }

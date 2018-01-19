@@ -7,7 +7,7 @@ declare(strict_types=1);
  * Time: 22:46
  */
 
-namespace App\Form;
+namespace App\Form\Config;
 
 
 use LightningSale\LndClient\Model\SendCoinsRequest;

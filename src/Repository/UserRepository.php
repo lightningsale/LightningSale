@@ -73,4 +73,9 @@ class UserRepository implements UserProviderInterface
     {
         return $this->userRepo->findAll();
     }
+
+    public function findByEmail(string $email): ?User
+    {
+        return $this->userRepo->findOneBy(['email' => $email]);
+    }
 }

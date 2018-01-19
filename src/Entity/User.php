@@ -70,9 +70,8 @@ abstract class User implements UserInterface, EquatableInterface
     public function __construct(string $email,EncoderFactoryInterface $encoderFactory,  string $rawPassword)
     {
         $this->email = $email;
-        $passwordEncoder = $encoderFactory->getEncoder(self::class);
-        $this->password = $passwordEncoder->encodePassword($rawPassword, $this->getSalt());
         $this->createdAt = new \DateTime();
+        $this->changePassword($encoderFactory, $rawPassword);
     }
 
     public function getRoles(): array
@@ -123,5 +122,14 @@ abstract class User implements UserInterface, EquatableInterface
         return $user->getUsername() === $this->email && $user->getPassword() === $this->password;
     }
 
+    public function changeEmail(string $email)
+    {
+        $this->email = $email;
+    }
 
+    public function changePassword(EncoderFactoryInterface $encoderFactory, string $rawPassword): void
+    {
+        $passwordEncoder = $encoderFactory->getEncoder(self::class);
+        $this->password = $passwordEncoder->encodePassword($rawPassword, $this->getSalt());
+    }
 }

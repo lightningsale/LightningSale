@@ -5,6 +5,9 @@ services:
     image: lightningsale/docker-lnd
     env_file:
       - .env
+    environment:
+      - "RPCLISTEN=lnd:10009"
+      - "RESTLISTEN=lnd:8080"
     volumes:
       - lnd:/root/.lnd
     ports:
@@ -14,11 +17,11 @@ services:
     entrypoint: ["./start-lnd.sh"]
     hostname: lnd
     command:
-      - "--neutrino.active"
+      - "--bitcoin.node=neutrino"
       - "--neutrino.connect=faucet.lightning.community"
       - "--autopilot.active"
       - "--no-macaroons"
-      - "--peerport=9736"
+      - "--listen=9736"
   pos:
     build:
       dockerfile: Dockerfile.xdebug

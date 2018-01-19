@@ -1,8 +1,33 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>Hello {{ user.email }}!</h1>
+    <div class="container">
 
-    <h3>User transactions: (including funding channels, in / out of wallet)</h3>
+        <div class="card">
+            <div class="card-header">{{ user.email }}</div>
+            <div class="card-body">
+                {{ form(form) }}
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="card">
+            <div class="card-header">User invoices:</div>
+            <table class="table" style="table-layout: fixed; width: 100%;">
+                <tbody>
+                {% for invoice in invoices %}
+                    <tr>
+                        <td>{{ invoice.rHashStr }}</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="1" class="text-center text-muted">No invoices</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
 {% endblock %}
-

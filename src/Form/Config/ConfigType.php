@@ -7,7 +7,7 @@ declare(strict_types=1);
  * Time: 17:00
  */
 
-namespace App\Form;
+namespace App\Form\Config;
 
 
 use App\Repository\ConfigRepository;
