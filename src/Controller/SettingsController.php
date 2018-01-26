@@ -10,10 +10,10 @@ declare(strict_types=1);
 namespace App\Controller;
 
 
-use App\Form\ConfigDTO;
-use App\Form\ConfigType;
-use App\Form\NewChannelType;
-use App\Form\WithdrawFundsType;
+use App\Form\Config\ConfigDTO;
+use App\Form\Config\ConfigType;
+use App\Form\Config\NewChannelType;
+use App\Form\Config\WithdrawFundsType;
 use App\Repository\ConfigRepository;
 use App\Service\Twig\SatoshiConverter;
 use Doctrine\ORM\EntityManagerInterface;

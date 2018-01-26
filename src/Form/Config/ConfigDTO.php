@@ -7,7 +7,7 @@ declare(strict_types=1);
  * Time: 17:48
  */
 
-namespace App\Form;
+namespace App\Form\Config;
 
 
 class ConfigDTO

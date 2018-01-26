@@ -30,10 +30,10 @@ class Invoice
     private $id;
 
     /**
-     * @var string
-     * @ORM\Column(type="string")
+     * @var resource
+     * @ORM\Column(type="blob", length=32)
      */
-    private $rHashString;
+    private $rHash;
 
     /**
      * @var Cashier|null
@@ -52,9 +52,14 @@ class Invoice
         return (int) $this->id;
     }
 
-    public function getRHashString(): string
+    public function getRHash(): string
     {
-        return $this->rHashString;
+        return stream_get_contents($this->rHash, 32);
+    }
+
+    public function getRHashStr(): string
+    {
+        return bin2hex($this->getRHash());
     }
 
     public function getCreatedBy(): ?Cashier
@@ -66,9 +71,9 @@ class Invoice
         return $this->createdAt;
     }
 
-    public function __construct(string $rHashString, Cashier $cashier)
+    public function __construct(string $rHash, Cashier $cashier)
     {
-        $this->rHashString = $rHashString;
+        $this->rHash = $rHash;
         $this->createdBy = $cashier;
         $this->createdAt = new \DateTime();
     }
@@ -80,6 +85,6 @@ class Invoice
 
     public function getInvoice(LndRestClient $lndClient): \LightningSale\LndClient\Model\Invoice
     {
-        return $lndClient->lookupInvoice($this->rHashString);
+        return $lndClient->lookupInvoice($this->rHash);
     }
 }

@@ -9,7 +9,7 @@
 namespace App\Controller;
 
 use App\Entity\Cashier;
-use App\Form\NewInvoiceType;
+use App\Form\Config\NewInvoiceType;
 use App\Repository\ConfigRepository;
 use App\Service\Twig\SatoshiConverter;
 use Doctrine\ORM\EntityManagerInterface;
@@ -76,11 +76,18 @@ class DashboardController extends Controller
         $form->handleRequest($request);
         $data=$form->getData();
 
-        $amount = (float) $data['amount'];
-        $amount = (string) $convertSatoshi->localToSatoshi($amount);
-        $description = $data['description'] ?? "";
+        $localAmount = (float) $data['amount'];
+        $amount = (string) $convertSatoshi->localToSatoshi($localAmount); // Extremely buggy ?!
         $timeoutConfig = $configRepository->getConfig(ConfigRepository::INVOICE_TIMEOUT);
-        $user->createInvoice($this->lndClient, $amount, $description, (int) $timeoutConfig->getValue());
+        $formatSatoshi = $convertSatoshi->formatSatoshi($amount);
+
+        $user->createInvoice(
+            $this->lndClient,
+            $amount,
+            sprintf("LightningSale %s", $formatSatoshi),
+            (int) $timeoutConfig->getValue()
+        );
+
         $this->em->flush();
 
         return $this->redirectToRoute("cashier_dashboard_index");

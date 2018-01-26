@@ -47,7 +47,9 @@ class LndStatusCheckController implements EventSubscriberInterface {
         if (!$event->isMasterRequest())
             return;
 
-        if (strpos($event->getRequest()->getPathInfo(), "/_wdt") === 0)
+        $pathInfo = $event->getRequest()->getPathInfo();
+        if (strpos($pathInfo, "/_wdt") === 0
+            || strpos($pathInfo, "/_profile") === 0)
             return;
 
         try {
@@ -57,7 +59,7 @@ class LndStatusCheckController implements EventSubscriberInterface {
                 $this->returnAndRenderMessage($event, "LND is Syncing with the Blockchain, please try again later (aprox. 10 - 15 minutes)");
 
         } catch (LndException $exception) {
-            $this->logger->critical("LndException", $exception);
+            $this->logger->critical("LndException", ['exception' => $exception]);
 
             if ($exception->getCode() === 404)
                 $this->returnAndRenderMessage($event, " Waiting for wallet encryption password. Use `lncli create` to create wallet, or `lncli unlock` to unlock already created wallet.", "warning");
@@ -65,10 +67,10 @@ class LndStatusCheckController implements EventSubscriberInterface {
                 throw $exception;
 
         } catch (ConnectException $exception) {
-            $this->logger->critical("Connection error", $exception);
+            $this->logger->critical("Connection error", ['exception' => $exception]);
             $this->returnAndRenderMessage($event, "Could not connect to LND, make sure it is running!", "danger");
         } catch (\Exception $exception) {
-            $this->logger->critical("Unkown error", $exception);
+            $this->logger->critical("Unkown error", ['exception' => $exception]);
             $this->returnAndRenderMessage($event, $exception->getMessage(), "danger");
         }
     }

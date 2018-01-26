@@ -17,7 +17,7 @@ use Symfony\Component\Intl\Intl;
 
 class SatoshiConverter extends \Twig_Extension
 {
-    private const SATOSHI_IN_BTC = 100000000.0;
+    private const SATOSHI_IN_BTC = 100000000;
     public const LOCALE_NOK = "nb_NO.utf8";
     public const LOCALE_USD = "en_US.utf8";
     private $configRepository;
@@ -64,10 +64,11 @@ class SatoshiConverter extends \Twig_Extension
         return round($price, $round);
     }
 
-    public function localToSatoshi(float $local): float
+    public function localToSatoshi(float $local): int
     {
-        $price = (float) $this->getExhange()->getBuyPrice();
-        return round($local / $price * self::SATOSHI_IN_BTC, 0);
+        $price = (float) $this->getExhange()->getBuyPrice($this->getCurrency());
+        $satoshi = $local / $price * self::SATOSHI_IN_BTC;
+        return (int) round($satoshi);
     }
 
     public function formatSatoshi($satoshi)
@@ -77,16 +78,16 @@ class SatoshiConverter extends \Twig_Extension
         return $formatter->formatCurrency($value, $this->getCurrency());
     }
 
-    public function currencySymbol() {
+    public function currencySymbol(): string {
         return Intl::getCurrencyBundle()->getCurrencySymbol($this->getCurrency());
     }
 
-    private function getLocale()
+    private function getLocale(): string
     {
         return $this->configRepository->getConfig(ConfigRepository::LOCALE, self::LOCALE_USD)->getValue();
     }
 
-    private function getCurrency()
+    private function getCurrency(): string
     {
         return $this->configRepository->getConfig(ConfigRepository::CURRENCY, "USD")->getValue();
     }
