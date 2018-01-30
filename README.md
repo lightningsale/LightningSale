@@ -10,10 +10,11 @@ Or use github.com/lightningsale/LightningSale and `docker-compose up`
 - `lookupInvoice` doesnt work 
 
 ## Milestone 1
- - [ ] Set up users and authentication (Security!)
- - [ ] Configure (Local currency, invoice timeout)
+ - [X] Set up users and authentication 
+ - [ ] 2-Factor auth
+ - [X] Configure (Local currency, invoice timeout)
  - [X] Funding
- - [ ] Peers (Connecting doesn't work so good)
+ - [X] Peers
  - [ ] Channels (Missing open/close channel, missing support in LND REST)
  - [X] Transactions
  - [ ] Invoices
@@ -21,7 +22,10 @@ Or use github.com/lightningsale/LightningSale and `docker-compose up`
     - [X] Pending invoices
     - [ ] Remove old unpaid invoices
     - [ ] Invoice details (missing support in LND REST)
- - [ ] Status, LND starting up (wait for sync), Wallet is encrypted, ask for decryption key etc
+ - [ ] Status
+    - [X] LND starting up (wait for sync), 
+    - [X] Wallet is encrypted
+    - [ ] ask for decryption key etc
 
 ## Milestone 2
  - [ ] Design / UX

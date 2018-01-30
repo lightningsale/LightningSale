@@ -6,13 +6,14 @@ services:
     env_file:
       - .env
     environment:
-      - "RPCLISTEN=lnd:10009"
-      - "RESTLISTEN=lnd:8080"
+      - "RPCLISTEN=localhost:10009"
+      - "RESTLISTEN=0.0.0.0:8080"
+      - "EXTERNALIP=92.221.98.237:9736"
     volumes:
       - lnd:/root/.lnd
     ports:
       - 9736:9736
-      - 127.0.0.1:10009:10009
+      - 127.0.0.1:8080:8080
     expose: ["8080"]
     entrypoint: ["./start-lnd.sh"]
     hostname: lnd
@@ -21,7 +22,7 @@ services:
       - "--neutrino.connect=faucet.lightning.community"
       - "--autopilot.active"
       - "--no-macaroons"
-      - "--listen=9736"
+      - "--listen=0.0.0.0:9736"
   pos:
     build:
       dockerfile: Dockerfile.xdebug
