@@ -21,8 +21,9 @@ services:
       - "--bitcoin.node=neutrino"
       - "--neutrino.connect=faucet.lightning.community"
       - "--autopilot.active"
-      - "--no-macaroons"
       - "--listen=0.0.0.0:9736"
+      - "--alias=lightning.Sale"
+      - "--color=#312546"
   pos:
     build:
       dockerfile: Dockerfile.xdebug

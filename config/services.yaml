@@ -2,6 +2,7 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     lnd_cert: "%kernel.project_dir%/var/lnd/tls.cert"
+    admin_macaroon: "%kernel.project_dir%/var/lnd/admin.macaroon"
     external_ip: "%env(EXTERNALIP)%"
     external_port: "%env(EXTERNALPORT)%"
     redis_dsn: "redis://%env(REDIS_URL)%"
@@ -25,7 +26,7 @@ services:
     LightningSale\LndClient\RestClient:
         class: LightningSale\LndClient\RestClient
         factory: ['LightningSale\LndClient\ClientFactory','createRestClient']
-        arguments: ["%env(LND_HOST)%", "%env(LND_PORT)%", "%env(RPCUSER)%", "%env(RPCPASS)%", "%lnd_cert%", "@logger"]
+        arguments: ["%env(LND_HOST)%", "%env(LND_PORT)%","%lnd_cert%", "%admin_macaroon%", "@logger"]
 
     App\Service\ExchangeService:
         arguments: [!tagged app.exchange]
