@@ -9,8 +9,6 @@
 namespace App\Form\Profile;
 
 
-use App\Entity\Cashier;
-use App\Entity\Merchant;
 use App\Repository\UserRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -50,8 +48,8 @@ class NewUserType extends AbstractType
             ->add("repeatPassword", PasswordType::class)
             ->add("role", ChoiceType::class, [
                 'choices' => [
-                    'Administrator' => Merchant::class,
-                    'User' => Cashier::class
+                    'Administrator' => true,
+                    'User' => false
                 ],
                 'label_attr' => ['class' => 'col-form-label'], //HOTFIX since symfony bootstrap adds the wrong class
                 'multiple' => false,

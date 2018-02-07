@@ -10,7 +10,6 @@ namespace App\Repository;
 
 
 use App\Entity\Cashier;
-use App\Entity\Merchant;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
@@ -63,7 +62,7 @@ class UserRepository implements UserProviderInterface
 
     public function supportsClass($class)
     {
-        return in_array($class, [User::class, Merchant::class, Cashier::class], true);
+        return in_array($class, [User::class, Cashier::class], true);
     }
 
     /**

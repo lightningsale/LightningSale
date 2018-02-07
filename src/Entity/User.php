@@ -17,14 +17,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 /**
  * Class User
  * @package App\Entity
- * @ORM\Table(name="users")
- * @ORM\Entity()
- * @ORM\InheritanceType("SINGLE_TABLE")
- * @ORM\DiscriminatorColumn(name="type",type="integer")
- * @ORM\DiscriminatorMap({
- *      0 = "App\Entity\Cashier",
- *      1 = "App\Entity\Merchant"
- * })
+ * @ORM\MappedSuperclass()
  */
 abstract class User implements UserInterface, EquatableInterface
 {
@@ -34,23 +27,29 @@ abstract class User implements UserInterface, EquatableInterface
      * @ORM\GeneratedValue(strategy="AUTO")
      * @ORM\Column(type="integer")
      */
-    protected $id;
+    private $id;
     /**
      * @var string
      * @ORM\Column(type="string", unique=true)
      */
-    protected $email;
+    private $email;
     /**
      * @var string
      * @ORM\Column(type="string")
      */
-    protected $password;
+    private $password;
 
     /**
      * @var \DateTime
      * @ORM\Column(type="datetime")
      */
     private $createdAt;
+
+    /**
+     * @var int
+     * @ORM\Column(type="integer")
+     */
+    private $type;
 
     public function getId(): int
     {
@@ -67,8 +66,9 @@ abstract class User implements UserInterface, EquatableInterface
         return $this->createdAt;
     }
 
-    public function __construct(string $email,EncoderFactoryInterface $encoderFactory,  string $rawPassword)
+    public function __construct(string $email,EncoderFactoryInterface $encoderFactory,  string $rawPassword, bool $admin)
     {
+        $this->type = $admin ? 1 : 0;
         $this->email = $email;
         $this->createdAt = new \DateTime();
         $this->changePassword($encoderFactory, $rawPassword);
@@ -91,10 +91,18 @@ abstract class User implements UserInterface, EquatableInterface
         $this->password = $passwordEncoder->encodePassword($rawPassword, $this->getSalt());
     }
 
+    public function changeRole(bool $isAdmin)
+    {
+        $this->type = $isAdmin ? 1 : 0;
+    }
     //region UserInterface
     public function getRoles(): array
     {
-        return ["ROLE_USER"];
+        switch ($this->type) {
+            case 0: return ["ROLE_CASHIER"];
+            case 1: return ["ROLE_MERCHANT"];
+            default: throw new \DomainException("unkown user role ({$this->type})!");
+        }
     }
 
     public function getPassword(): string

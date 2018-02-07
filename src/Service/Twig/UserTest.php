@@ -10,29 +10,15 @@ declare(strict_types=1);
 namespace App\Service\Twig;
 
 
-use App\Entity\Cashier;
-use App\Entity\Merchant;
+use App\Entity\User;
 
 class UserTest extends \Twig_Extension
 {
-
-    /**
-     * Returns a list of tests to add to the existing list.
-     *
-     * @return \Twig_Test[]
-     */
     public function getTests()
     {
         return [
-            new \Twig_Test("Merchant", $this->instanceOfTest(Merchant::class)),
-            new \Twig_Test("Cashier", $this->instanceOfTest(Cashier::class))
+            new \Twig_Test("Merchant", function (User $user) {return $user->getRoles() === ["ROLE_MERCHANT"];}),
+            new \Twig_Test("Cashier", function (User $user) {return $user->getRoles() === ["ROLE_CASHIER"];})
         ];
-    }
-
-    private function instanceOfTest($class): \Closure
-    {
-        return function($object) use ($class) {
-            return $object instanceof $class;
-        };
     }
 }

@@ -10,7 +10,6 @@ namespace App\Form\Profile;
 
 
 use App\Entity\Cashier;
-use App\Entity\Merchant;
 use App\Repository\UserRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -61,10 +60,10 @@ class UserType extends AbstractType
             ])
             ->add("role", ChoiceType::class, [
                 'attr' => ['readonly' => $user === $loggedInUser],
-                'data' => $user instanceof Merchant ? "merchant" : "cashier",
+                'data' => $user->getRoles() === ["ROLE_MERCHANT"],
                 'choices' => [
-                    'Administrator' => Merchant::class,
-                    'User' => Cashier::class
+                    'Administrator' => true,
+                    'User' => false
                 ],
                 'label_attr' => ['class' => 'col-form-label'], //HOTFIX since symfony bootstrap adds the wrong class
                 'multiple' => false,

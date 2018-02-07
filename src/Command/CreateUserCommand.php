@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace App\Command;
 
 
-use App\Entity\Merchant;
+use App\Entity\Cashier;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
@@ -53,7 +53,7 @@ class CreateUserCommand extends Command
         if ($password1 !== $password2)
             throw new \DomainException("Passwords not identical!");
 
-        $user = new Merchant($email, $this->encoderFactory, $password1);
+        $user = new Cashier($email, $this->encoderFactory, $password1,true);
         $this->em->persist($user);
         $this->em->flush();
 

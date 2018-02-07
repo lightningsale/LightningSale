@@ -10,7 +10,6 @@ namespace App\Controller;
 
 
 use App\Entity\Cashier;
-use App\Entity\Merchant;
 use App\Form\Profile\NewUserDTO;
 use App\Form\Profile\NewUserType;
 use App\Form\Profile\UserDTO;
@@ -72,8 +71,8 @@ class UsersController extends Controller
             } else {
                 /** @var UserDTO $data */
                 $data = $form->getData();
-                $admin = $data->role === Merchant::class;
                 $cashier->changeEmail($data->email);
+                $cashier->changeRole($data->role);
 
                 $this->em->getConnection()->update("users",['type' => $admin ? 1 : 0], ['id' => $cashier->getId()]);
 
@@ -100,10 +99,7 @@ class UsersController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var NewUserDTO $data */
             $data = $form->getData();
-            if ($data->role === Merchant::class)
-                $user = new Merchant($data->email, $encoderFactory, $data->newPassword);
-            else
-                $user = new Cashier($data->email, $encoderFactory, $data->newPassword);
+            $user = new Cashier($data->email, $encoderFactory, $data->newPassword, $data->role);
 
             $this->em->persist($user);
             $this->em->flush();

@@ -7,6 +7,8 @@
  */
 
 namespace App\Entity;
+
+
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use LightningSale\LndClient\Client as LndRestClient;
@@ -16,9 +18,11 @@ use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
  * Class Cashier
  * @package App\Entity
  * @ORM\Entity()
+ * @ORM\Table(name="users")
  */
 class Cashier extends User
 {
+
     /**
      * @var Invoice[]|ArrayCollection
      * @ORM\OneToMany(targetEntity="App\Entity\Invoice", cascade={"persist"}, mappedBy="createdBy")
@@ -36,16 +40,12 @@ class Cashier extends User
     public function __construct(
         string $email,
         EncoderFactoryInterface $encoderFactory,
-        string $rawPassword
+        string $rawPassword,
+        bool $admin
     ){
-        parent::__construct($email, $encoderFactory, $rawPassword);
+        parent::__construct($email, $encoderFactory, $rawPassword, $admin);
 
         $this->invoices = new ArrayCollection();
-    }
-
-    public function getRoles(): array
-    {
-        return ["ROLE_CASHIER"];
     }
 
     public function createInvoice(
