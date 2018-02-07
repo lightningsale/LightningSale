@@ -74,6 +74,24 @@ abstract class User implements UserInterface, EquatableInterface
         $this->changePassword($encoderFactory, $rawPassword);
     }
 
+    public function verifyPassword(EncoderFactoryInterface $encoderFactory, string $rawPassword): bool
+    {
+        $passwordEncoder = $encoderFactory->getEncoder(self::class);
+        return $passwordEncoder->isPasswordValid($this->password, $rawPassword, $this->getSalt());
+    }
+
+    public function changeEmail(string $email)
+    {
+        $this->email = $email;
+    }
+
+    public function changePassword(EncoderFactoryInterface $encoderFactory, string $rawPassword): void
+    {
+        $passwordEncoder = $encoderFactory->getEncoder(self::class);
+        $this->password = $passwordEncoder->encodePassword($rawPassword, $this->getSalt());
+    }
+
+    //region UserInterface
     public function getRoles(): array
     {
         return ["ROLE_USER"];
@@ -82,12 +100,6 @@ abstract class User implements UserInterface, EquatableInterface
     public function getPassword(): string
     {
         return $this->password;
-    }
-
-    public function verifyPassword(EncoderFactoryInterface $encoderFactory, string $rawPassword): bool
-    {
-        $passwordEncoder = $encoderFactory->getEncoder(self::class);
-        return $passwordEncoder->isPasswordValid($this->password, $rawPassword, $this->getSalt());
     }
 
     public function getSalt()
@@ -101,35 +113,10 @@ abstract class User implements UserInterface, EquatableInterface
     }
 
     public function eraseCredentials(){}
-
-    public function serialize()
-    {
-        return serialize([
-            $this->id,
-            $this->email
-        ]);
-    }
-
-    public function unserialize($serialized)
-    {
-        [
-            $this->id,
-            $this->email] = unserialize($serialized,[self::class, Merchant::class, Cashier::class]);
-    }
+    //endregion
 
     public function isEqualTo(UserInterface $user)
     {
         return $user->getUsername() === $this->email && $user->getPassword() === $this->password;
-    }
-
-    public function changeEmail(string $email)
-    {
-        $this->email = $email;
-    }
-
-    public function changePassword(EncoderFactoryInterface $encoderFactory, string $rawPassword): void
-    {
-        $passwordEncoder = $encoderFactory->getEncoder(self::class);
-        $this->password = $passwordEncoder->encodePassword($rawPassword, $this->getSalt());
     }
 }

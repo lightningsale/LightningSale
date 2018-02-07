@@ -21,5 +21,4 @@ class Merchant extends Cashier
     {
         return ["ROLE_MERCHANT"];
     }
-
 }

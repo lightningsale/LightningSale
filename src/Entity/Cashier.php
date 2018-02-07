@@ -33,8 +33,11 @@ class Cashier extends User
         return $this->invoices;
     }
 
-    public function __construct(string $email, EncoderFactoryInterface $encoderFactory, string $rawPassword)
-    {
+    public function __construct(
+        string $email,
+        EncoderFactoryInterface $encoderFactory,
+        string $rawPassword
+    ){
         parent::__construct($email, $encoderFactory, $rawPassword);
 
         $this->invoices = new ArrayCollection();
@@ -45,8 +48,12 @@ class Cashier extends User
         return ["ROLE_CASHIER"];
     }
 
-    public function createInvoice(LndRestClient $lndClient, string $amount, string $memo = "", int $timeout = 3600): Invoice
-    {
+    public function createInvoice(
+        LndRestClient $lndClient,
+        string $amount,
+        string $memo = "",
+        int $timeout = 3600
+    ): Invoice {
         $addInvoiceResponse = $lndClient->addInvoice($memo, $amount, $timeout);
 
         $invoice = Invoice::fromAddInvoiceResponse($addInvoiceResponse, $this);
