@@ -55,8 +55,10 @@ class LndStatusCheckController implements EventSubscriberInterface {
         try {
             $info = $this->lndClient->getInfo();
 
-            if (!$info->isSyncedToChain())
+            if (!$info->isSyncedToChain()) {
+                $latestBlock = $info->getBestHeaderTimestamp()->format("F j, Y");
                 $this->returnAndRenderMessage($event, "LND is Syncing with the Blockchain, please try again later (aprox. 10 - 15 minutes)");
+            }
 
         } catch (LndException $exception) {
             $this->logger->critical("LndException", ['exception' => $exception]);

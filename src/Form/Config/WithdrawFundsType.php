@@ -10,14 +10,11 @@ declare(strict_types=1);
 namespace App\Form\Config;
 
 
-use LightningSale\LndClient\Model\SendCoinsRequest;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class WithdrawFundsType extends AbstractType
 {
@@ -31,19 +28,4 @@ class WithdrawFundsType extends AbstractType
             ->add("save", SubmitType::class, ['label' => 'Withdraw'])
             ;
     }
-
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults([
-            'data_class' => SendCoinsRequest::class,
-            'empty_data' => function(FormInterface $form) {
-                $address = (string) $form->get('address')->getData();
-                $amount = (string) $form->get("amount")->getData();
-                $fee = (string) $form->get("fee")->getData();
-
-                return new SendCoinsRequest($address, $amount, $fee);
-            }
-        ]);
-    }
-
 }

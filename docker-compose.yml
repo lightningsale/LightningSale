@@ -2,7 +2,7 @@ version: "2.1"
 
 services:
   lnd:
-    image: lightningsale/docker-lnd
+    image: lightningsale/docker-lnd:master
     env_file:
       - .env
     environment:
@@ -22,7 +22,7 @@ services:
       - "--neutrino.connect=faucet.lightning.community"
       - "--autopilot.active"
       - "--listen=0.0.0.0:9736"
-      - "--alias=lightning.Sale"
+      - "--alias=Lightning.Sale"
       - "--color=#312546"
   pos:
     build:

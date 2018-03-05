@@ -73,9 +73,6 @@ class UsersController extends Controller
                 $data = $form->getData();
                 $cashier->changeEmail($data->email);
                 $cashier->changeRole($data->role);
-
-                $this->em->getConnection()->update("users",['type' => $admin ? 1 : 0], ['id' => $cashier->getId()]);
-
                 $this->em->flush();
                 $this->addFlash("success", "User updated");
             }

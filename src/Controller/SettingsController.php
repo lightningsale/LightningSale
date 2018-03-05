@@ -106,7 +106,11 @@ class SettingsController extends Controller
         $withdrawForm->handleRequest($request);
 
         if ($withdrawForm->isSubmitted() && $withdrawForm->isValid()) {
-            $txid = $this->lndClient->sendCoins($withdrawForm->getData());
+            $data = $withdrawForm->getData();
+            $addr = $data['address'];
+            $amount = $data['amount'];
+            $satPrByte = $data['fee'];
+            $txid = $this->lndClient->sendCoins($addr, $amount, null, $satPrByte);
             $this->addFlash("success", "Funds have been sent with transaction id: $txid");
             $this->redirectToRoute("settings_wallet");
         }

@@ -1326,17 +1326,18 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/lightningsale/lnd-client.git",
-                "reference": "aeeef8b9e29bc4e08873ebf8284c0461d898e55c"
+                "reference": "d8c9ba362318a7e0b917d3e54788d6a70362420a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lightningsale/lnd-client/zipball/aeeef8b9e29bc4e08873ebf8284c0461d898e55c",
-                "reference": "aeeef8b9e29bc4e08873ebf8284c0461d898e55c",
+                "url": "https://api.github.com/repos/lightningsale/lnd-client/zipball/d8c9ba362318a7e0b917d3e54788d6a70362420a",
+                "reference": "d8c9ba362318a7e0b917d3e54788d6a70362420a",
                 "shasum": ""
             },
             "require": {
                 "guzzlehttp/guzzle": "^6.3",
-                "php": "^7.1"
+                "php": "^7.1",
+                "psr/log": "^1.0"
             },
             "type": "library",
             "autoload": {
@@ -1355,7 +1356,7 @@
                 }
             ],
             "description": "A LND REST Client",
-            "time": "2018-01-10T09:25:46+00:00"
+            "time": "2018-03-04T15:22:50+00:00"
         },
         {
             "name": "monolog/monolog",
