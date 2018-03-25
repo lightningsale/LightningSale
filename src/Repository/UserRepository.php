@@ -12,7 +12,6 @@ namespace App\Repository;
 use App\Entity\Cashier;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -21,16 +20,14 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 class UserRepository implements UserProviderInterface
 {
     private $userRepo;
-    private $encoderFactory;
 
     /**
      * UserRepository constructor.
      * @param $em
      */
-    public function __construct(EntityManagerInterface $em, EncoderFactoryInterface $encoderFactory)
+    public function __construct(EntityManagerInterface $em)
     {
-        $this->userRepo = $em->getRepository(User::class);
-        $this->encoderFactory = $encoderFactory;
+        $this->userRepo = $em->getRepository(Cashier::class);
     }
 
     public function find(int $id): ?User

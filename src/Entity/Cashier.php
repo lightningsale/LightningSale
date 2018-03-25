@@ -18,7 +18,7 @@ use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
  * Class Cashier
  * @package App\Entity
  * @ORM\Entity()
- * @ORM\Table(name="users")
+ * @ORM\Table(name="user")
  */
 class Cashier extends User
 {
