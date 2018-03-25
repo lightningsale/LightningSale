@@ -9,11 +9,8 @@ Encore
     // uncomment to create hashed filenames (e.g. app.abc123.css)
     .enableVersioning(Encore.isProduction())
 
-    // uncomment to define the assets of the project
-    .addEntry('js/main', './assets/main.js')
-    .addStyleEntry('css/main', './assets/main.scss')
 
-
+    .enableReactPreset()
      .enableSassLoader(function(sassOptions) {}, {
          resolve_url_loader: false
      })
@@ -24,6 +21,12 @@ Encore
         Chart: 'chart',
         Popper: 'popper.js'
     })
+
+    // uncomment to define the assets of the project
+    .addEntry('js/main', './assets/main.js')
+    .addEntry('js/front', './assets/front.js')
+    .addStyleEntry('css/main', './assets/main.scss')
+    .addStyleEntry('css/front', './assets/front.scss')
 ;
 
 module.exports = Encore.getWebpackConfig();

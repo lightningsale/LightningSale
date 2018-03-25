@@ -97,7 +97,7 @@ class FormAuthenticator extends AbstractGuardAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
-        return new RedirectResponse($this->router->generate("cashier_dashboard_index"));
+        return new RedirectResponse($this->router->generate("front_index"));
     }
 
     public function supportsRememberMe()
